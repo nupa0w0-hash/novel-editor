@@ -1,40 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { NovelEpisode, Chapter, Section } from '../types';
+import React, { useState } from 'react';
+import { NovelEpisode, Chapter, Section, ViewMode } from '../types';
 
 interface NovelPreviewProps {
   episode: NovelEpisode;
+  viewMode?: ViewMode;
 }
 
-export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
+export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode, viewMode = 'desktop' }) => {
   const { title, header, style, chapters } = episode;
   const [collapsedChapters, setCollapsedChapters] = useState<Set<string>>(new Set());
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
-
-  // Add responsive CSS
-  useEffect(() => {
-    const styleId = 'novel-preview-responsive-styles';
-    if (!document.getElementById(styleId)) {
-      const styleTag = document.createElement('style');
-      styleTag.id = styleId;
-      styleTag.innerHTML = `
-        .novel-container-responsive {
-          padding: 3rem 1.5rem;
-        }
-        @media (min-width: 768px) {
-          .novel-container-responsive {
-            padding: 3rem 8rem;
-          }
-        }
-      `;
-      document.head.appendChild(styleTag);
-    }
-    return () => {
-      const existingStyle = document.getElementById(styleId);
-      if (existingStyle) {
-        existingStyle.remove();
-      }
-    };
-  }, []);
 
   const getTitleAlignment = (position: string) => {
     const map: Record<string, { vertical: string; horizontal: string }> = {
@@ -343,6 +318,9 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
     );
   };
 
+  // Calculate padding based on viewMode
+  const containerPadding = viewMode === 'mobile' ? '3rem 1.5rem' : '3rem 8rem';
+
   return (
     <div
       style={{
@@ -353,11 +331,11 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
       }}
     >
       <div
-        className="novel-container-responsive"
         style={{
           maxWidth: '800px',
           margin: '0 auto',
           background: style.cardBg,
+          padding: containerPadding,
           borderRadius: '8px',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         }}
