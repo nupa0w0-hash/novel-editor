@@ -12,7 +12,7 @@ export function generateHTML(episode: NovelEpisode, collapseMode: CollapseMode =
     '1:1': '100%',
     '3:4': '133.333%',
     '9:16': '177.778%',
-    'original': 'auto'
+    original: 'auto',
   };
 
   // Generate hero image HTML
@@ -41,32 +41,36 @@ export function generateHTML(episode: NovelEpisode, collapseMode: CollapseMode =
   }
 
   // Generate header (when not using background layout)
-  const headerHTML = (header.heroImageLayout !== 'background' || !header.heroImageUrl) ? `
+  const headerHTML = header.heroImageLayout !== 'background' || !header.heroImageUrl
+    ? `
     <div style="text-align: center; margin-bottom: 3rem;">
       <h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 0.5rem; margin-top: 0; color: ${header.titleColor || style.bodyText};">${escapeHtml(title)}</h1>
       ${header.subtitle ? `<p style="font-size: 1.125rem; color: ${header.subtitleColor || style.bodyText}; opacity: 0.7; margin-bottom: 0.5rem; margin-top: 0;">${escapeHtml(header.subtitle)}</p>` : ''}
       ${header.author ? `<p style="font-size: 0.875rem; color: ${header.authorColor || style.bodyText}; opacity: 0.6; font-weight: 700; margin-top: 0; margin-bottom: 0;">${escapeHtml(header.author)}</p>` : ''}
-      ${header.tags && header.tags.length > 0 ? `<div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;">${header.tags.map(tag => `<span style="background: ${style.highlightBg}; color: ${style.highlightText}; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 700;">${escapeHtml(tag)}</span>`).join('')}</div>` : ''}
+      ${header.tags && header.tags.length > 0 ? `<div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;">${header.tags
+        .map(
+          (tag) =>
+            `<span style="background: ${style.highlightBg}; color: ${style.highlightText}; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 700;">${escapeHtml(tag)}</span>`
+        )
+        .join('')}</div>` : ''}
     </div>
-  ` : '';
+  `
+    : '';
 
   // Generate chapters HTML
-  const chaptersHTML = chapters && chapters.length > 0 ? chapters.map((chapter, idx) => generateChapterHTML(chapter, idx, style, collapseMode)).join('\n') : '';
+  const chaptersHTML = chapters && chapters.length > 0
+    ? chapters.map((chapter, idx) => generateChapterHTML(chapter, idx, style, collapseMode)).join('\n')
+    : '';
 
-  // Generate complete HTML with all inline styles
+  // NOTE: 게시판 붙여넣기에서는 <script>가 거의 항상 제거되어 토글이 안 됩니다.
+  // 그래서 토글은 JS 대신 <details>/<summary> 기반으로 생성합니다.
+  // 또한 게시판에서 <style>이 제거될 수도 있으므로 핵심 레이아웃은 inline 스타일로 처리합니다.
+
+  const innerPadding = '2.5rem 2rem';
+
   const containerHTML = `
-<style>
-  .novel-container-responsive {
-    padding: 3rem 1.5rem;
-  }
-  @media (min-width: 768px) {
-    .novel-container-responsive {
-      padding: 3rem 8rem;
-    }
-  }
-</style>
-<div style="font-family: ${style.fontFamily}; background: ${style.transparentOuter ? 'transparent' : style.outerBg}; padding: 2rem;">
-  <div class="novel-container-responsive" style="max-width: 800px; margin: 0 auto; background: ${style.cardBg}; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+<div style="font-family: ${style.fontFamily}; background: ${style.transparentOuter ? 'transparent' : style.outerBg}; padding: 0;">
+  <div style="width: 100%; max-width: 1000px; margin: 0 auto; background: ${style.cardBg}; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: ${innerPadding};">
     ${header.heroImageLayout === 'above' && header.heroImageUrl ? heroImageHTML : ''}
     ${header.heroImageLayout === 'background' && header.heroImageUrl ? heroImageHTML : headerHTML}
     ${header.heroImageLayout !== 'above' && header.heroImageLayout !== 'background' && !header.heroImageUrl ? headerHTML : ''}
@@ -81,56 +85,59 @@ export function generateHTML(episode: NovelEpisode, collapseMode: CollapseMode =
 }
 
 function generateChapterHTML(chapter: Chapter, index: number, style: any, collapseMode: CollapseMode): string {
-  const chapterId = `chapter-${index}`;
-  const isCollapsed = collapseMode === 'all-collapsed';
-  const initialIcon = isCollapsed ? '▶' : '▼';
-  const displayStyle = isCollapsed ? 'none' : 'block';
-  
-  // Process main content
-  const mainContentHTML = chapter.content ? chapter.content.split(/\n\n+/).map(para => {
-    const processedText = processDialogue(escapeHtml(para), style.highlightBg, style.highlightText);
-    return `<p style="margin-bottom: 0.7rem; margin-top: 0; line-height: ${style.lineHeight}; letter-spacing: ${style.letterSpacing}px; color: ${style.bodyText};">${processedText}</p>`;
-  }).join('\n') : '';
+  const openAttr = collapseMode === 'all-expanded' ? 'open' : '';
 
-  // Process sections
-  const sectionsHTML = chapter.sections && chapter.sections.length > 0 ? 
-    `<div style="margin-top: 0.3rem;">${chapter.sections.map((section, sIdx) => generateSectionHTML(section, index, sIdx, style, collapseMode)).join('\n')}</div>` : '';
+  const mainContentHTML = chapter.content
+    ? chapter.content
+        .split(/\n\n+/)
+        .map((para) => {
+          const processedText = processDialogue(escapeHtml(para), style.highlightBg, style.highlightText);
+          return `<p style="margin-bottom: 0.7rem; margin-top: 0; line-height: ${style.lineHeight}; letter-spacing: ${style.letterSpacing}px; color: ${style.bodyText};">${processedText}</p>`;
+        })
+        .join('\n')
+    : '';
+
+  const sectionsHTML = chapter.sections && chapter.sections.length > 0
+    ? `<div style="margin-top: 0.3rem;">${chapter.sections
+        .map((section, sIdx) => generateSectionHTML(section, index, sIdx, style, collapseMode))
+        .join('\n')}</div>`
+    : '';
 
   return `
-    <div style="margin-bottom: 0.5rem; background-color: ${style.chapterBg || style.cardBg}; border: 1px solid ${style.chapterBorder || '#e5e7eb'}; border-radius: 4px; overflow: hidden; font-family: ${style.fontFamily};">
-      <div onclick="toggleChapter('${chapterId}')" style="background-color: ${style.chapterTitleBg || '#f3f4f6'}; color: ${style.chapterTitleText || style.bodyText}; padding: 0.4rem 0.6rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; font-weight: 600; font-size: 0.85rem; font-family: ${style.fontFamily}; user-select: none;">
-        <span id="${chapterId}-icon" style="opacity: 0.4; font-size: 0.65rem;">${initialIcon}</span>
+    <details ${openAttr} style="margin-bottom: 0.5rem; background-color: ${style.chapterBg || style.cardBg}; border: 1px solid ${style.chapterBorder || '#e5e7eb'}; border-radius: 4px; overflow: hidden; font-family: ${style.fontFamily};">
+      <summary style="background-color: ${style.chapterTitleBg || '#f3f4f6'}; color: ${style.chapterTitleText || style.bodyText}; padding: 0.4rem 0.6rem; cursor: pointer; font-weight: 600; font-size: 0.85rem; font-family: ${style.fontFamily}; user-select: none;">
         ${escapeHtml(chapter.title)}
-      </div>
-      <div id="${chapterId}-content" style="padding: 0.6rem; font-size: ${style.fontSize}px; font-family: ${style.fontFamily}; display: ${displayStyle};">
+      </summary>
+      <div style="padding: 0.6rem; font-size: ${style.fontSize}px; font-family: ${style.fontFamily};">
         ${mainContentHTML}
         ${sectionsHTML}
       </div>
-    </div>
+    </details>
   `;
 }
 
-function generateSectionHTML(section: Section, chapterIdx: number, sectionIdx: number, style: any, collapseMode: CollapseMode): string {
-  const sectionId = `section-${chapterIdx}-${sectionIdx}`;
-  const isCollapsed = collapseMode === 'all-collapsed';
-  const initialIcon = isCollapsed ? '▶' : '▼';
-  const displayStyle = isCollapsed ? 'none' : 'block';
-  
-  const sectionContentHTML = section.content ? section.content.split(/\n\n+/).map(para => {
-    const processedText = processDialogue(escapeHtml(para), style.highlightBg, style.highlightText);
-    return `<p style="margin-bottom: 0.5rem; margin-top: 0; line-height: ${style.lineHeight}; letter-spacing: ${style.letterSpacing}px; color: ${style.bodyText};">${processedText}</p>`;
-  }).join('\n') : '';
+function generateSectionHTML(section: Section, _chapterIdx: number, _sectionIdx: number, style: any, collapseMode: CollapseMode): string {
+  const openAttr = collapseMode === 'all-expanded' ? 'open' : '';
+
+  const sectionContentHTML = section.content
+    ? section.content
+        .split(/\n\n+/)
+        .map((para) => {
+          const processedText = processDialogue(escapeHtml(para), style.highlightBg, style.highlightText);
+          return `<p style="margin-bottom: 0.5rem; margin-top: 0; line-height: ${style.lineHeight}; letter-spacing: ${style.letterSpacing}px; color: ${style.bodyText};">${processedText}</p>`;
+        })
+        .join('\n')
+    : '';
 
   return `
-    <div style="margin-bottom: 0.3rem; border-left: 2px solid ${style.highlightBg}; padding-left: 0.5rem; font-family: ${style.fontFamily};">
-      <div onclick="toggleSection('${sectionId}')" style="cursor: pointer; display: flex; align-items: center; gap: 0.3rem; margin-bottom: 0.3rem; font-weight: 600; font-size: 0.8rem; font-family: ${style.fontFamily}; color: ${style.bodyText}; user-select: none;">
-        <span id="${sectionId}-icon" style="opacity: 0.35; font-size: 0.6rem;">${initialIcon}</span>
+    <details ${openAttr} style="margin-bottom: 0.3rem; border-left: 2px solid ${style.highlightBg}; padding-left: 0.5rem; font-family: ${style.fontFamily};">
+      <summary style="cursor: pointer; margin-bottom: 0.3rem; font-weight: 600; font-size: 0.8rem; font-family: ${style.fontFamily}; color: ${style.bodyText}; user-select: none;">
         ${escapeHtml(section.subtitle)}
-      </div>
-      <div id="${sectionId}-content" style="font-size: ${style.fontSize}px; font-family: ${style.fontFamily}; display: ${displayStyle};">
+      </summary>
+      <div style="font-size: ${style.fontSize}px; font-family: ${style.fontFamily};">
         ${sectionContentHTML}
       </div>
-    </div>
+    </details>
   `;
 }
 
@@ -159,41 +166,11 @@ function processDialogue(text: string, highlightBg: string, highlightText: strin
 }
 
 export function copyHTMLToClipboard(html: string): Promise<void> {
-  // Add toggle scripts
-  const fullHTML = `
-<script>
-function toggleChapter(id) {
-  const content = document.getElementById(id + '-content');
-  const icon = document.getElementById(id + '-icon');
-  if (content.style.display === 'none') {
-    content.style.display = 'block';
-    icon.textContent = '▼';
-  } else {
-    content.style.display = 'none';
-    icon.textContent = '▶';
-  }
-}
-
-function toggleSection(id) {
-  const content = document.getElementById(id + '-content');
-  const icon = document.getElementById(id + '-icon');
-  if (content.style.display === 'none') {
-    content.style.display = 'block';
-    icon.textContent = '▼';
-  } else {
-    content.style.display = 'none';
-    icon.textContent = '▶';
-  }
-}
-</script>
-${html}
-  `.trim();
-  
-  return navigator.clipboard.writeText(fullHTML);
+  // 게시판 붙여넣기에서 스크립트가 제거되는 경우가 많아, 여기서는 순수 HTML만 복사합니다.
+  return navigator.clipboard.writeText(html);
 }
 
 export function downloadHTML(html: string, filename: string): void {
-  // For download, wrap in full HTML document
   const fullHTML = `<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -208,31 +185,6 @@ export function downloadHTML(html: string, filename: string): void {
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { margin: 0; padding: 0; }
   </style>
-  <script>
-  function toggleChapter(id) {
-    const content = document.getElementById(id + '-content');
-    const icon = document.getElementById(id + '-icon');
-    if (content.style.display === 'none') {
-      content.style.display = 'block';
-      icon.textContent = '▼';
-    } else {
-      content.style.display = 'none';
-      icon.textContent = '▶';
-    }
-  }
-
-  function toggleSection(id) {
-    const content = document.getElementById(id + '-content');
-    const icon = document.getElementById(id + '-icon');
-    if (content.style.display === 'none') {
-      content.style.display = 'block';
-      icon.textContent = '▼';
-    } else {
-      content.style.display = 'none';
-      icon.textContent = '▶';
-    }
-  }
-  </script>
 </head>
 <body>
 ${html}
