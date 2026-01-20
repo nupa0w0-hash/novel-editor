@@ -55,8 +55,8 @@ export function generateHTML(episode: NovelEpisode, collapseMode: CollapseMode =
 
   // Generate complete HTML with all inline styles
   const containerHTML = `
-<div style="font-family: ${style.fontFamily}; background: ${style.transparentOuter ? 'transparent' : style.outerBg}; padding: 2rem;">
-  <div style="max-width: 800px; margin: 0 auto; background: ${style.cardBg}; padding: 3rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+<div style="font-family: ${style.fontFamily}; background: ${style.transparentOuter ? 'transparent' : style.outerBg}; padding: 2rem 1rem;">
+  <div style="max-width: 600px; margin: 0 auto; background: ${style.cardBg}; padding: 3rem 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
     ${header.heroImageLayout === 'above' && header.heroImageUrl ? heroImageHTML : ''}
     ${header.heroImageLayout === 'background' && header.heroImageUrl ? heroImageHTML : headerHTML}
     ${header.heroImageLayout !== 'above' && header.heroImageLayout !== 'background' && !header.heroImageUrl ? headerHTML : ''}
@@ -79,20 +79,20 @@ function generateChapterHTML(chapter: Chapter, index: number, style: any, collap
   // Process main content
   const mainContentHTML = chapter.content ? chapter.content.split(/\n\n+/).map(para => {
     const processedText = processDialogue(escapeHtml(para), style.highlightBg, style.highlightText);
-    return `<p style="margin-bottom: 0.8rem; margin-top: 0; line-height: ${style.lineHeight}; letter-spacing: ${style.letterSpacing}px; color: ${style.bodyText};">${processedText}</p>`;
+    return `<p style="margin-bottom: 0.7rem; margin-top: 0; line-height: ${style.lineHeight}; letter-spacing: ${style.letterSpacing}px; color: ${style.bodyText};">${processedText}</p>`;
   }).join('\n') : '';
 
   // Process sections
   const sectionsHTML = chapter.sections && chapter.sections.length > 0 ? 
-    `<div style="margin-top: 0.4rem;">${chapter.sections.map((section, sIdx) => generateSectionHTML(section, index, sIdx, style, collapseMode)).join('\n')}</div>` : '';
+    `<div style="margin-top: 0.3rem;">${chapter.sections.map((section, sIdx) => generateSectionHTML(section, index, sIdx, style, collapseMode)).join('\n')}</div>` : '';
 
   return `
-    <div style="margin-bottom: 0.7rem; background-color: ${style.chapterBg || style.cardBg}; border: 1px solid ${style.chapterBorder || '#e5e7eb'}; border-radius: 4px; overflow: hidden;">
-      <div onclick="toggleChapter('${chapterId}')" style="background-color: ${style.chapterTitleBg || '#f3f4f6'}; color: ${style.chapterTitleText || style.bodyText}; padding: 0.35rem 0.6rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; font-weight: 600; font-size: 0.85rem; user-select: none;">
+    <div style="margin-bottom: 0.5rem; background-color: ${style.chapterBg || style.cardBg}; border: 1px solid ${style.chapterBorder || '#e5e7eb'}; border-radius: 4px; overflow: hidden; font-family: ${style.fontFamily};">
+      <div onclick="toggleChapter('${chapterId}')" style="background-color: ${style.chapterTitleBg || '#f3f4f6'}; color: ${style.chapterTitleText || style.bodyText}; padding: 0.35rem 0.5rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; font-weight: 600; font-size: 0.85rem; font-family: ${style.fontFamily}; user-select: none;">
         <span id="${chapterId}-icon" style="opacity: 0.4; font-size: 0.65rem;">${initialIcon}</span>
         ${escapeHtml(chapter.title)}
       </div>
-      <div id="${chapterId}-content" style="padding: 0.6rem; font-size: ${style.fontSize}px; display: ${displayStyle};">
+      <div id="${chapterId}-content" style="padding: 0.5rem; font-size: ${style.fontSize}px; font-family: ${style.fontFamily}; display: ${displayStyle};">
         ${mainContentHTML}
         ${sectionsHTML}
       </div>
@@ -108,16 +108,16 @@ function generateSectionHTML(section: Section, chapterIdx: number, sectionIdx: n
   
   const sectionContentHTML = section.content ? section.content.split(/\n\n+/).map(para => {
     const processedText = processDialogue(escapeHtml(para), style.highlightBg, style.highlightText);
-    return `<p style="margin-bottom: 0.6rem; margin-top: 0; line-height: ${style.lineHeight}; letter-spacing: ${style.letterSpacing}px; color: ${style.bodyText};">${processedText}</p>`;
+    return `<p style="margin-bottom: 0.5rem; margin-top: 0; line-height: ${style.lineHeight}; letter-spacing: ${style.letterSpacing}px; color: ${style.bodyText};">${processedText}</p>`;
   }).join('\n') : '';
 
   return `
-    <div style="margin-bottom: 0.4rem; border-left: 2px solid ${style.highlightBg}; padding-left: 0.6rem;">
-      <div onclick="toggleSection('${sectionId}')" style="cursor: pointer; display: flex; align-items: center; gap: 0.3rem; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.8rem; color: ${style.bodyText}; user-select: none;">
+    <div style="margin-bottom: 0.3rem; border-left: 2px solid ${style.highlightBg}; padding-left: 0.5rem; font-family: ${style.fontFamily};">
+      <div onclick="toggleSection('${sectionId}')" style="cursor: pointer; display: flex; align-items: center; gap: 0.3rem; margin-bottom: 0.3rem; font-weight: 600; font-size: 0.8rem; font-family: ${style.fontFamily}; color: ${style.bodyText}; user-select: none;">
         <span id="${sectionId}-icon" style="opacity: 0.35; font-size: 0.6rem;">${initialIcon}</span>
         ${escapeHtml(section.subtitle)}
       </div>
-      <div id="${sectionId}-content" style="font-size: ${style.fontSize}px; display: ${displayStyle};">
+      <div id="${sectionId}-content" style="font-size: ${style.fontSize}px; font-family: ${style.fontFamily}; display: ${displayStyle};">
         ${sectionContentHTML}
       </div>
     </div>
