@@ -331,7 +331,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
           maxWidth: '800px',
           margin: '0 auto',
           background: style.cardBg,
-          padding: '3rem',
+          padding: '3rem 1.5rem',
           borderRadius: '8px',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         }}
