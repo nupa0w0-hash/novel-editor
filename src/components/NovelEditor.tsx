@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { NovelEpisode, NovelStyle, Chapter, StylePreset } from '../types';
+import { NovelEpisode, NovelStyle, Chapter, Section, StylePreset } from '../types';
 import { NovelPreview } from './NovelPreview';
 import { generateHTML, copyHTMLToClipboard, downloadHTML } from '../utils/htmlExporter';
 import { exportPresetsToFile, importPresetsFromFile } from '../utils/presetManager';
@@ -380,7 +380,7 @@ export const NovelEditor = () => {
     setChapters([...chapters, newChapter]);
   };
 
-  const updateChapter = (id: string, field: keyof Chapter, value: string | boolean) => {
+  const updateChapter = (id: string, field: keyof Chapter, value: any) => {
     setChapters(chapters.map(ch => 
       ch.id === id ? { ...ch, [field]: value } : ch
     ));
@@ -421,6 +421,61 @@ export const NovelEditor = () => {
 
   const expandAll = () => {
     setChapters(chapters.map(ch => ({ ...ch, isCollapsed: false })));
+  };
+
+  // Section functions
+  const addSection = (chapterId: string) => {
+    setChapters(chapters.map(ch => {
+      if (ch.id === chapterId) {
+        const newSection: Section = {
+          id: generateId(),
+          subtitle: `소제목 ${ch.sections.length + 1}`,
+          content: '',
+          isCollapsed: false
+        };
+        return { ...ch, sections: [...ch.sections, newSection] };
+      }
+      return ch;
+    }));
+  };
+
+  const updateSection = (chapterId: string, sectionId: string, field: keyof Section, value: any) => {
+    setChapters(chapters.map(ch => {
+      if (ch.id === chapterId) {
+        return {
+          ...ch,
+          sections: ch.sections.map(sec => 
+            sec.id === sectionId ? { ...sec, [field]: value } : sec
+          )
+        };
+      }
+      return ch;
+    }));
+  };
+
+  const deleteSection = (chapterId: string, sectionId: string) => {
+    if (window.confirm('이 소제목을 삭제하시겠습니까?')) {
+      setChapters(chapters.map(ch => {
+        if (ch.id === chapterId) {
+          return { ...ch, sections: ch.sections.filter(sec => sec.id !== sectionId) };
+        }
+        return ch;
+      }));
+    }
+  };
+
+  const toggleSectionCollapse = (chapterId: string, sectionId: string) => {
+    setChapters(chapters.map(ch => {
+      if (ch.id === chapterId) {
+        return {
+          ...ch,
+          sections: ch.sections.map(sec => 
+            sec.id === sectionId ? { ...sec, isCollapsed: !sec.isCollapsed } : sec
+          )
+        };
+      }
+      return ch;
+    }));
   };
 
   // Preset functions
@@ -690,13 +745,75 @@ export const NovelEditor = () => {
 
                       {/* Chapter Content */}
                       {!chapter.isCollapsed && (
-                        <div className="p-3">
-                          <textarea
-                            className="w-full min-h-[200px] resize-none outline-none text-sm leading-relaxed text-gray-700 placeholder-gray-300"
-                            placeholder="내용을 입력하세요... (엔터 두 번 = 새 문단, 따옴표 = 대화)"
-                            value={chapter.content}
-                            onChange={e => updateChapter(chapter.id, 'content', e.target.value)}
-                          />
+                        <div className="p-3 space-y-3">
+                          {/* Main Content */}
+                          <div>
+                            <textarea
+                              className="w-full min-h-[150px] resize-none outline-none text-sm leading-relaxed text-gray-700 placeholder-gray-300"
+                              placeholder="메인 내용을 입력하세요... (엔터 두 번 = 새 문단, 따옴표 = 대화)"
+                              value={chapter.content}
+                              onChange={e => updateChapter(chapter.id, 'content', e.target.value)}
+                            />
+                          </div>
+
+                          {/* Sections */}
+                          <div className="border-t pt-3">
+                            <div className="flex items-center justify-between mb-2">
+                              <label className="text-[10px] font-bold text-gray-500 uppercase">소제목</label>
+                              <button 
+                                onClick={() => addSection(chapter.id)}
+                                className="text-[10px] bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
+                              >
+                                + 소제목 추가
+                              </button>
+                            </div>
+
+                            {chapter.sections.length > 0 && (
+                              <div className="space-y-2">
+                                {chapter.sections.map(section => (
+                                  <div key={section.id} className="border border-gray-200 rounded overflow-hidden">
+                                    {/* Section Header */}
+                                    <div 
+                                      className="flex items-center gap-2 px-2 py-1.5 bg-gray-50 cursor-pointer hover:bg-gray-100"
+                                      onClick={() => toggleSectionCollapse(chapter.id, section.id)}
+                                    >
+                                      <span className="text-gray-400 text-xs">
+                                        {section.isCollapsed ? '▶' : '▼'}
+                                      </span>
+                                      <input
+                                        className="flex-1 text-xs font-semibold bg-transparent outline-none"
+                                        value={section.subtitle}
+                                        onChange={e => updateSection(chapter.id, section.id, 'subtitle', e.target.value)}
+                                        onClick={e => e.stopPropagation()}
+                                        placeholder="소제목"
+                                      />
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          deleteSection(chapter.id, section.id);
+                                        }}
+                                        className="text-[10px] px-1 text-red-400 hover:text-red-600"
+                                      >
+                                        ✕
+                                      </button>
+                                    </div>
+
+                                    {/* Section Content */}
+                                    {!section.isCollapsed && (
+                                      <div className="p-2">
+                                        <textarea
+                                          className="w-full min-h-[80px] resize-none outline-none text-xs leading-relaxed text-gray-700 placeholder-gray-300"
+                                          placeholder="소제목 내용..."
+                                          value={section.content}
+                                          onChange={e => updateSection(chapter.id, section.id, 'content', e.target.value)}
+                                        />
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       )}
                     </div>
