@@ -1,6 +1,8 @@
 import { NovelEpisode, Chapter, Section } from '../types';
 
-export function generateHTML(episode: NovelEpisode): string {
+export type CollapseMode = 'all-expanded' | 'all-collapsed';
+
+export function generateHTML(episode: NovelEpisode, collapseMode: CollapseMode = 'all-expanded'): string {
   const { title, header, style, chapters } = episode;
 
   const aspectRatioMap: Record<string, string> = {
@@ -49,7 +51,7 @@ export function generateHTML(episode: NovelEpisode): string {
   ` : '';
 
   // Generate chapters HTML
-  const chaptersHTML = chapters && chapters.length > 0 ? chapters.map((chapter, idx) => generateChapterHTML(chapter, idx, style)).join('\n') : '';
+  const chaptersHTML = chapters && chapters.length > 0 ? chapters.map((chapter, idx) => generateChapterHTML(chapter, idx, style, collapseMode)).join('\n') : '';
 
   // Generate complete HTML with all inline styles
   const containerHTML = `
@@ -68,26 +70,29 @@ export function generateHTML(episode: NovelEpisode): string {
   return containerHTML.trim();
 }
 
-function generateChapterHTML(chapter: Chapter, index: number, style: any): string {
+function generateChapterHTML(chapter: Chapter, index: number, style: any, collapseMode: CollapseMode): string {
   const chapterId = `chapter-${index}`;
+  const isCollapsed = collapseMode === 'all-collapsed';
+  const initialIcon = isCollapsed ? '▶' : '▼';
+  const displayStyle = isCollapsed ? 'none' : 'block';
   
   // Process main content
   const mainContentHTML = chapter.content ? chapter.content.split(/\n\n+/).map(para => {
     const processedText = processDialogue(escapeHtml(para), style.highlightBg, style.highlightText);
-    return `<p style="margin-bottom: 1.5rem; margin-top: 0; line-height: ${style.lineHeight}; letter-spacing: ${style.letterSpacing}px; color: ${style.bodyText};">${processedText}</p>`;
+    return `<p style="margin-bottom: 0.8rem; margin-top: 0; line-height: ${style.lineHeight}; letter-spacing: ${style.letterSpacing}px; color: ${style.bodyText};">${processedText}</p>`;
   }).join('\n') : '';
 
   // Process sections
   const sectionsHTML = chapter.sections && chapter.sections.length > 0 ? 
-    `<div style="margin-top: 1rem;">${chapter.sections.map((section, sIdx) => generateSectionHTML(section, index, sIdx, style)).join('\n')}</div>` : '';
+    `<div style="margin-top: 0.4rem;">${chapter.sections.map((section, sIdx) => generateSectionHTML(section, index, sIdx, style, collapseMode)).join('\n')}</div>` : '';
 
   return `
-    <div style="margin-bottom: 2rem; background-color: ${style.chapterBg || style.cardBg}; border: 2px solid ${style.chapterBorder || '#e5e7eb'}; border-radius: 12px; overflow: hidden;">
-      <div onclick="toggleChapter('${chapterId}')" style="background-color: ${style.chapterTitleBg || '#f3f4f6'}; color: ${style.chapterTitleText || style.bodyText}; padding: 1rem 1.5rem; cursor: pointer; display: flex; align-items: center; gap: 0.75rem; font-weight: 700; font-size: 1.25rem; user-select: none;">
-        <span id="${chapterId}-icon" style="opacity: 0.6;">▼</span>
+    <div style="margin-bottom: 0.7rem; background-color: ${style.chapterBg || style.cardBg}; border: 1px solid ${style.chapterBorder || '#e5e7eb'}; border-radius: 4px; overflow: hidden;">
+      <div onclick="toggleChapter('${chapterId}')" style="background-color: ${style.chapterTitleBg || '#f3f4f6'}; color: ${style.chapterTitleText || style.bodyText}; padding: 0.35rem 0.6rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; font-weight: 600; font-size: 0.85rem; user-select: none;">
+        <span id="${chapterId}-icon" style="opacity: 0.4; font-size: 0.65rem;">${initialIcon}</span>
         ${escapeHtml(chapter.title)}
       </div>
-      <div id="${chapterId}-content" style="padding: 1.5rem; font-size: ${style.fontSize}px;">
+      <div id="${chapterId}-content" style="padding: 0.6rem; font-size: ${style.fontSize}px; display: ${displayStyle};">
         ${mainContentHTML}
         ${sectionsHTML}
       </div>
@@ -95,21 +100,24 @@ function generateChapterHTML(chapter: Chapter, index: number, style: any): strin
   `;
 }
 
-function generateSectionHTML(section: Section, chapterIdx: number, sectionIdx: number, style: any): string {
+function generateSectionHTML(section: Section, chapterIdx: number, sectionIdx: number, style: any, collapseMode: CollapseMode): string {
   const sectionId = `section-${chapterIdx}-${sectionIdx}`;
+  const isCollapsed = collapseMode === 'all-collapsed';
+  const initialIcon = isCollapsed ? '▶' : '▼';
+  const displayStyle = isCollapsed ? 'none' : 'block';
   
   const sectionContentHTML = section.content ? section.content.split(/\n\n+/).map(para => {
     const processedText = processDialogue(escapeHtml(para), style.highlightBg, style.highlightText);
-    return `<p style="margin-bottom: 1rem; margin-top: 0; line-height: ${style.lineHeight}; letter-spacing: ${style.letterSpacing}px; color: ${style.bodyText};">${processedText}</p>`;
+    return `<p style="margin-bottom: 0.6rem; margin-top: 0; line-height: ${style.lineHeight}; letter-spacing: ${style.letterSpacing}px; color: ${style.bodyText};">${processedText}</p>`;
   }).join('\n') : '';
 
   return `
-    <div style="margin-bottom: 1rem; border-left: 3px solid ${style.highlightBg}; padding-left: 1rem;">
-      <div onclick="toggleSection('${sectionId}')" style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; font-weight: 600; font-size: 1.1rem; color: ${style.bodyText}; user-select: none;">
-        <span id="${sectionId}-icon" style="opacity: 0.5; font-size: 0.875rem;">▼</span>
+    <div style="margin-bottom: 0.4rem; border-left: 2px solid ${style.highlightBg}; padding-left: 0.6rem;">
+      <div onclick="toggleSection('${sectionId}')" style="cursor: pointer; display: flex; align-items: center; gap: 0.3rem; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.8rem; color: ${style.bodyText}; user-select: none;">
+        <span id="${sectionId}-icon" style="opacity: 0.35; font-size: 0.6rem;">${initialIcon}</span>
         ${escapeHtml(section.subtitle)}
       </div>
-      <div id="${sectionId}-content" style="font-size: ${style.fontSize}px;">
+      <div id="${sectionId}-content" style="font-size: ${style.fontSize}px; display: ${displayStyle};">
         ${sectionContentHTML}
       </div>
     </div>
