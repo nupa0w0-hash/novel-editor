@@ -303,7 +303,6 @@ export const NovelEditor = () => {
   // Export options
   const [exportCollapsed, setExportCollapsed] = useState(false);
   const exportMode: CollapseMode = exportCollapsed ? 'all-collapsed' : 'all-expanded';
-  const [exportViewMode, setExportViewMode] = useState<ViewMode>('desktop');
 
   // Chapter system
   const [chapters, setChapters] = useState<Chapter[]>([
@@ -543,9 +542,9 @@ export const NovelEditor = () => {
   const handleCopyHTML = async () => {
     if (!previewEpisode) return;
     try {
-      const html = generateHTML(previewEpisode, exportMode, exportViewMode);
+      const html = generateHTML(previewEpisode, exportMode, viewMode);
       await copyHTMLToClipboard(html);
-      alert(`HTML이 복사되었습니다! (${exportCollapsed ? '모두 접힘' : '모두 펼침'} / ${exportViewMode === 'desktop' ? 'PC' : '모바일'})`);
+      alert(`HTML이 복사되었습니다! (${exportCollapsed ? '모두 접힘' : '모두 펼침'} / ${viewMode === 'desktop' ? 'PC' : '모바일'})`);
     } catch (err) {
       console.error('Copy failed', err);
       alert('복사에 실패했습니다');
@@ -554,7 +553,7 @@ export const NovelEditor = () => {
 
   const handleDownloadHTML = () => {
     if (!previewEpisode) return;
-    const html = generateHTML(previewEpisode, exportMode, exportViewMode);
+    const html = generateHTML(previewEpisode, exportMode, viewMode);
     downloadHTML(html, title || 'novel');
   };
 
@@ -600,18 +599,19 @@ export const NovelEditor = () => {
               모두 접힘
             </label>
 
+            {/* Single PC/Mobile toggle for both preview + export */}
             <div className="flex rounded overflow-hidden border border-gray-200">
               <button
-                onClick={() => setExportViewMode('desktop')}
-                className={`text-[10px] font-bold px-2 py-1 ${exportViewMode === 'desktop' ? 'bg-black text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
-                title="PC 폭으로 내보내기"
+                onClick={() => setViewMode('desktop')}
+                className={`text-[10px] font-bold px-2 py-1 ${viewMode === 'desktop' ? 'bg-black text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+                title="PC (미리보기 + 내보내기)"
               >
                 PC
               </button>
               <button
-                onClick={() => setExportViewMode('mobile')}
-                className={`text-[10px] font-bold px-2 py-1 ${exportViewMode === 'mobile' ? 'bg-black text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
-                title="모바일 폭으로 내보내기"
+                onClick={() => setViewMode('mobile')}
+                className={`text-[10px] font-bold px-2 py-1 ${viewMode === 'mobile' ? 'bg-black text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+                title="모바일 (미리보기 + 내보내기)"
               >
                 모바일
               </button>
@@ -1150,28 +1150,6 @@ export const NovelEditor = () => {
       </div>
 
       <div className="w-1/2 h-full bg-gray-200 overflow-hidden flex flex-col relative">
-        <div className="absolute top-4 left-4 z-10 flex gap-2">
-          <button
-            onClick={() => setViewMode('mobile')}
-            className={`text-xs font-bold px-3 py-1.5 rounded transition-all ${
-              viewMode === 'mobile'
-                ? 'bg-black text-white'
-                : 'bg-white/90 text-gray-600 hover:bg-white'
-            }`}
-          >
-            📱 모바일
-          </button>
-          <button
-            onClick={() => setViewMode('desktop')}
-            className={`text-xs font-bold px-3 py-1.5 rounded transition-all ${
-              viewMode === 'desktop'
-                ? 'bg-black text-white'
-                : 'bg-white/90 text-gray-600 hover:bg-white'
-            }`}
-          >
-            💻 PC
-          </button>
-        </div>
         <div className="absolute top-4 right-4 z-10 bg-black/80 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-sm pointer-events-none">
           실시간 미리보기
         </div>
