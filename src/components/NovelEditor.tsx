@@ -464,6 +464,24 @@ export const NovelEditor = () => {
     }
   };
 
+  const moveSection = (chapterId: string, sectionId: string, direction: 'up' | 'down') => {
+    setChapters(chapters.map(ch => {
+      if (ch.id === chapterId) {
+        const index = ch.sections.findIndex(sec => sec.id === sectionId);
+        if (direction === 'up' && index > 0) {
+          const newSections = [...ch.sections];
+          [newSections[index - 1], newSections[index]] = [newSections[index], newSections[index - 1]];
+          return { ...ch, sections: newSections };
+        } else if (direction === 'down' && index < ch.sections.length - 1) {
+          const newSections = [...ch.sections];
+          [newSections[index], newSections[index + 1]] = [newSections[index + 1], newSections[index]];
+          return { ...ch, sections: newSections };
+        }
+      }
+      return ch;
+    }));
+  };
+
   const toggleSectionCollapse = (chapterId: string, sectionId: string) => {
     setChapters(chapters.map(ch => {
       if (ch.id === chapterId) {
@@ -770,7 +788,7 @@ export const NovelEditor = () => {
 
                             {chapter.sections.length > 0 && (
                               <div className="space-y-2">
-                                {chapter.sections.map(section => (
+                                {chapter.sections.map((section, sIndex) => (
                                   <div key={section.id} className="border border-gray-200 rounded overflow-hidden">
                                     {/* Section Header */}
                                     <div 
@@ -787,15 +805,28 @@ export const NovelEditor = () => {
                                         onClick={e => e.stopPropagation()}
                                         placeholder="소제목"
                                       />
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          deleteSection(chapter.id, section.id);
-                                        }}
-                                        className="text-[10px] px-1 text-red-400 hover:text-red-600"
-                                      >
-                                        ✕
-                                      </button>
+                                      <div className="flex gap-1" onClick={e => e.stopPropagation()}>
+                                        <button
+                                          onClick={() => moveSection(chapter.id, section.id, 'up')}
+                                          disabled={sIndex === 0}
+                                          className="text-[10px] px-1 text-gray-400 hover:text-gray-600 disabled:opacity-30"
+                                        >
+                                          ↑
+                                        </button>
+                                        <button
+                                          onClick={() => moveSection(chapter.id, section.id, 'down')}
+                                          disabled={sIndex === chapter.sections.length - 1}
+                                          className="text-[10px] px-1 text-gray-400 hover:text-gray-600 disabled:opacity-30"
+                                        >
+                                          ↓
+                                        </button>
+                                        <button
+                                          onClick={() => deleteSection(chapter.id, section.id)}
+                                          className="text-[10px] px-1 text-red-400 hover:text-red-600"
+                                        >
+                                          ✕
+                                        </button>
+                                      </div>
                                     </div>
 
                                     {/* Section Content */}
