@@ -191,10 +191,10 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
       <div
         key={chapter.id}
         style={{
-          marginBottom: '2rem',
+          marginBottom: '1rem',
           backgroundColor: style.chapterBg || style.cardBg,
-          border: `2px solid ${style.chapterBorder || '#e5e7eb'}`,
-          borderRadius: '12px',
+          border: `1px solid ${style.chapterBorder || '#e5e7eb'}`,
+          borderRadius: '6px',
           overflow: 'hidden',
         }}
       >
@@ -204,23 +204,30 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
           style={{
             backgroundColor: style.chapterTitleBg || '#f3f4f6',
             color: style.chapterTitleText || style.bodyText,
-            padding: '1rem 1.5rem',
+            padding: '0.5rem 0.75rem',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.75rem',
-            fontWeight: 700,
-            fontSize: '1.25rem',
+            gap: '0.5rem',
+            fontWeight: 600,
+            fontSize: '0.95rem',
             userSelect: 'none',
+            transition: 'background-color 0.15s',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = style.chapterBorder || '#e5e7eb';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = style.chapterTitleBg || '#f3f4f6';
           }}
         >
-          <span style={{ opacity: 0.6 }}>{isCollapsed ? '▶' : '▼'}</span>
+          <span style={{ opacity: 0.5, fontSize: '0.7rem' }}>{isCollapsed ? '▶' : '▼'}</span>
           {chapter.title}
         </div>
 
         {/* Chapter Content */}
         {!isCollapsed && (
-          <div style={{ padding: '1.5rem' }}>
+          <div style={{ padding: '0.75rem' }}>
             {/* Main content */}
             {chapter.content && (
               <div
@@ -229,11 +236,11 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
                   color: style.bodyText,
                   lineHeight: style.lineHeight,
                   letterSpacing: `${style.letterSpacing}px`,
-                  marginBottom: chapter.sections.length > 0 ? '1.5rem' : 0,
+                  marginBottom: chapter.sections.length > 0 ? '0.75rem' : 0,
                 }}
               >
                 {chapter.content.split(/\n\n+/).map((para, idx) => (
-                  <p key={idx} style={{ marginBottom: '1.5rem' }}>
+                  <p key={idx} style={{ marginBottom: '1rem' }}>
                     {processDialogue(para)}
                   </p>
                 ))}
@@ -242,7 +249,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
 
             {/* Sections */}
             {chapter.sections.length > 0 && (
-              <div style={{ marginTop: '1rem' }}>
+              <div style={{ marginTop: '0.5rem' }}>
                 {chapter.sections.map(section => renderSection(section))}
               </div>
             )}
@@ -259,9 +266,9 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
       <div
         key={section.id}
         style={{
-          marginBottom: '1rem',
-          borderLeft: `3px solid ${style.highlightBg}`,
-          paddingLeft: '1rem',
+          marginBottom: '0.5rem',
+          borderLeft: `2px solid ${style.highlightBg}`,
+          paddingLeft: '0.75rem',
         }}
       >
         {/* Section Subtitle */}
@@ -271,15 +278,15 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem',
-            marginBottom: isCollapsed ? 0 : '0.75rem',
+            gap: '0.4rem',
+            marginBottom: isCollapsed ? 0 : '0.5rem',
             fontWeight: 600,
-            fontSize: '1.1rem',
+            fontSize: '0.9rem',
             color: style.bodyText,
             userSelect: 'none',
           }}
         >
-          <span style={{ opacity: 0.5, fontSize: '0.875rem' }}>{isCollapsed ? '▶' : '▼'}</span>
+          <span style={{ opacity: 0.4, fontSize: '0.7rem' }}>{isCollapsed ? '▶' : '▼'}</span>
           {section.subtitle}
         </div>
 
@@ -294,7 +301,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
             }}
           >
             {section.content.split(/\n\n+/).map((para, idx) => (
-              <p key={idx} style={{ marginBottom: '1rem' }}>
+              <p key={idx} style={{ marginBottom: '0.75rem' }}>
                 {processDialogue(para)}
               </p>
             ))}
