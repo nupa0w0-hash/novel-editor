@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { NovelEpisode, NovelStyle } from '../types';
 import { NovelPreview } from './NovelPreview';
 import { generateHTML, copyHTMLToClipboard, downloadHTML } from '../utils/htmlExporter';
+import { generatePlainText, copyPlainTextToClipboard } from '../utils/textExporter';
 
 const FONT_PRESETS = [
   { name: 'Noto Serif KR', value: 'Noto Serif KR, serif' },
@@ -102,7 +103,7 @@ const DEFAULT_PRESETS: { name: string, style: NovelStyle }[] = [
   },
 ];
 
-export const NovelEditor: React.FC = () => {
+export const NovelEditor = () => {
   const [activeTab, setActiveTab] = useState<'INPUTS' | 'STYLES'>('INPUTS');
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
@@ -131,7 +132,6 @@ export const NovelEditor: React.FC = () => {
       }
     }
 
-    // Load draft
     const draft = localStorage.getItem('novel_draft');
     if (draft) {
       try {
@@ -171,7 +171,6 @@ export const NovelEditor: React.FC = () => {
     };
     setPreviewEpisode(episode);
 
-    // Auto-save draft
     localStorage.setItem('novel_draft', JSON.stringify({
       title,
       author,
@@ -203,15 +202,27 @@ export const NovelEditor: React.FC = () => {
     }
   };
 
+  const handleCopyText = async () => {
+    if (!previewEpisode) return;
+    try {
+      const text = generatePlainText(previewEpisode);
+      await copyPlainTextToClipboard(text);
+      alert('텍스트가 복사되었습니다!');
+    } catch (err) {
+      console.error('Copy failed', err);
+      alert('복사에 실패했습니다');
+    }
+  };
+
   const handleCopyHTML = async () => {
     if (!previewEpisode) return;
     try {
       const html = generateHTML(previewEpisode);
       await copyHTMLToClipboard(html);
-      alert('HTML copied to clipboard!');
+      alert('HTML이 복사되었습니다!');
     } catch (err) {
       console.error('Copy failed', err);
-      alert('Failed to copy HTML');
+      alert('복사에 실패했습니다');
     }
   };
 
@@ -235,9 +246,7 @@ export const NovelEditor: React.FC = () => {
 
   return (
     <div className="flex h-screen w-screen bg-gray-100 overflow-hidden">
-      {/* Left Panel */}
       <div className="w-1/2 min-w-[400px] flex flex-col border-r border-gray-200 bg-white shadow-xl z-10">
-        {/* Header */}
         <div className="h-14 border-b border-gray-100 flex items-center justify-between px-4 bg-white sticky top-0 z-20">
           <div className="flex gap-4">
             <button
@@ -257,8 +266,11 @@ export const NovelEditor: React.FC = () => {
             <button onClick={clearDraft} className="text-xs font-bold text-gray-400 hover:text-gray-600 px-3 py-2">
               Clear
             </button>
+            <button onClick={handleCopyText} className="text-xs font-bold bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors">
+              텍스트 복사
+            </button>
             <button onClick={handleCopyHTML} className="text-xs font-bold bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
-              Copy HTML
+              HTML 복사
             </button>
             <button onClick={handleDownloadHTML} className="text-xs font-bold bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors">
               Download
@@ -266,7 +278,6 @@ export const NovelEditor: React.FC = () => {
           </div>
         </div>
 
-        {/* Content */}
         <div className="flex-1 overflow-y-auto custom-scrollbar">
           {activeTab === 'INPUTS' && (
             <div className="p-8 space-y-6">
@@ -574,7 +585,6 @@ export const NovelEditor: React.FC = () => {
         </div>
       </div>
 
-      {/* Right Panel: Preview */}
       <div className="w-1/2 h-full bg-gray-200 overflow-hidden flex flex-col relative">
         <div className="absolute top-4 right-4 z-10 bg-black/80 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-sm pointer-events-none">
           LIVE PREVIEW
