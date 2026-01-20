@@ -25,7 +25,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
     const parts: React.ReactNode[] = [];
     let lastIndex = 0;
 
-    const regex = /("[^"]+"|「[^」]+」|"[^"]+")/g;
+    const regex = /("[^"]+"|「[^」]+」|“[^”]+”)/g;
     let match;
 
     while ((match = regex.exec(text)) !== null) {
@@ -191,7 +191,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
       <div
         key={chapter.id}
         style={{
-          marginBottom: '0.7rem',
+          marginBottom: '0.5rem',
           backgroundColor: style.chapterBg || style.cardBg,
           border: `1px solid ${style.chapterBorder || '#e5e7eb'}`,
           borderRadius: '4px',
@@ -204,13 +204,14 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
           style={{
             backgroundColor: style.chapterTitleBg || '#f3f4f6',
             color: style.chapterTitleText || style.bodyText,
-            padding: '0.35rem 0.6rem',
+            padding: '0.35rem 0.5rem',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             gap: '0.4rem',
             fontWeight: 600,
             fontSize: '0.85rem',
+            fontFamily: style.fontFamily,
             userSelect: 'none',
             transition: 'background-color 0.15s',
           }}
@@ -227,7 +228,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
 
         {/* Chapter Content */}
         {!isCollapsed && (
-          <div style={{ padding: '0.6rem' }}>
+          <div style={{ padding: '0.5rem', fontFamily: style.fontFamily }}>
             {/* Main content */}
             {chapter.content && (
               <div
@@ -236,11 +237,11 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
                   color: style.bodyText,
                   lineHeight: style.lineHeight,
                   letterSpacing: `${style.letterSpacing}px`,
-                  marginBottom: chapter.sections.length > 0 ? '0.6rem' : 0,
+                  marginBottom: chapter.sections.length > 0 ? '0.5rem' : 0,
                 }}
               >
                 {chapter.content.split(/\n\n+/).map((para, idx) => (
-                  <p key={idx} style={{ marginBottom: '0.8rem' }}>
+                  <p key={idx} style={{ marginBottom: '0.7rem' }}>
                     {processDialogue(para)}
                   </p>
                 ))}
@@ -249,7 +250,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
 
             {/* Sections */}
             {chapter.sections.length > 0 && (
-              <div style={{ marginTop: '0.4rem' }}>
+              <div style={{ marginTop: '0.3rem' }}>
                 {chapter.sections.map(section => renderSection(section))}
               </div>
             )}
@@ -266,9 +267,9 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
       <div
         key={section.id}
         style={{
-          marginBottom: '0.4rem',
+          marginBottom: '0.3rem',
           borderLeft: `2px solid ${style.highlightBg}`,
-          paddingLeft: '0.6rem',
+          paddingLeft: '0.5rem',
         }}
       >
         {/* Section Subtitle */}
@@ -279,9 +280,10 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
             display: 'flex',
             alignItems: 'center',
             gap: '0.3rem',
-            marginBottom: isCollapsed ? 0 : '0.4rem',
+            marginBottom: isCollapsed ? 0 : '0.3rem',
             fontWeight: 600,
             fontSize: '0.8rem',
+            fontFamily: style.fontFamily,
             color: style.bodyText,
             userSelect: 'none',
           }}
@@ -298,10 +300,11 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
               color: style.bodyText,
               lineHeight: style.lineHeight,
               letterSpacing: `${style.letterSpacing}px`,
+              fontFamily: style.fontFamily,
             }}
           >
             {section.content.split(/\n\n+/).map((para, idx) => (
-              <p key={idx} style={{ marginBottom: '0.6rem' }}>
+              <p key={idx} style={{ marginBottom: '0.5rem' }}>
                 {processDialogue(para)}
               </p>
             ))}
@@ -316,7 +319,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
       style={{
         fontFamily: style.fontFamily,
         background: style.transparentOuter ? 'transparent' : style.outerBg,
-        padding: '2rem',
+        padding: '2rem 1rem',
         minHeight: '100vh',
       }}
     >
@@ -325,7 +328,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
           maxWidth: '800px',
           margin: '0 auto',
           background: style.cardBg,
-          padding: '3rem',
+          padding: '3rem 2rem',
           borderRadius: '8px',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         }}
