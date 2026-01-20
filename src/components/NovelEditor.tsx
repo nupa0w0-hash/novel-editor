@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { NovelEpisode, NovelStyle } from '../types';
 import { NovelPreview } from './NovelPreview';
 import { generateHTML, copyHTMLToClipboard, downloadHTML } from '../utils/htmlExporter';
-import { generatePlainText, copyPlainTextToClipboard } from '../utils/textExporter';
 
 const FONT_PRESETS = [
   { name: 'Noto Serif KR', value: 'Noto Serif KR, serif' },
@@ -202,24 +201,12 @@ export const NovelEditor = () => {
     }
   };
 
-  const handleCopyText = async () => {
-    if (!previewEpisode) return;
-    try {
-      const text = generatePlainText(previewEpisode);
-      await copyPlainTextToClipboard(text);
-      alert('텍스트가 복사되었습니다!');
-    } catch (err) {
-      console.error('Copy failed', err);
-      alert('복사에 실패했습니다');
-    }
-  };
-
   const handleCopyHTML = async () => {
     if (!previewEpisode) return;
     try {
       const html = generateHTML(previewEpisode);
       await copyHTMLToClipboard(html);
-      alert('HTML이 복사되었습니다!');
+      alert('HTML이 복사되었습니다! 아카라이브 게시판에 바로 붙여넣기 하세요.');
     } catch (err) {
       console.error('Copy failed', err);
       alert('복사에 실패했습니다');
@@ -265,9 +252,6 @@ export const NovelEditor = () => {
           <div className="flex gap-2">
             <button onClick={clearDraft} className="text-xs font-bold text-gray-400 hover:text-gray-600 px-3 py-2">
               Clear
-            </button>
-            <button onClick={handleCopyText} className="text-xs font-bold bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors">
-              텍스트 복사
             </button>
             <button onClick={handleCopyHTML} className="text-xs font-bold bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
               HTML 복사
