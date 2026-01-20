@@ -205,7 +205,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
           style={{
             backgroundColor: style.chapterTitleBg || '#f3f4f6',
             color: style.chapterTitleText || style.bodyText,
-            padding: '0.35rem 0.5rem',
+            padding: '0.4rem 0.6rem',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -229,7 +229,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
 
         {/* Chapter Content */}
         {!isCollapsed && (
-          <div style={{ padding: '0.5rem', fontFamily: style.fontFamily }}>
+          <div style={{ padding: '0.6rem', fontFamily: style.fontFamily }}>
             {/* Main content */}
             {chapter.content && (
               <div
@@ -322,16 +322,16 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
       style={{
         fontFamily: style.fontFamily,
         background: style.transparentOuter ? 'transparent' : style.outerBg,
-        padding: '2rem 1rem',
+        padding: '2rem',
         minHeight: '100vh',
       }}
     >
       <div
         style={{
-          maxWidth: '600px',
+          maxWidth: '800px',
           margin: '0 auto',
           background: style.cardBg,
-          padding: '3rem 2rem',
+          padding: '3rem',
           borderRadius: '8px',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         }}
