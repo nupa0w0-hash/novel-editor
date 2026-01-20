@@ -570,76 +570,78 @@ export const NovelEditor = () => {
   };
 
   return (
-    <div className="flex h-screen w-screen bg-gray-100 overflow-hidden">
-      <div className="w-1/2 min-w-[400px] flex flex-col border-r border-gray-200 bg-white shadow-xl z-10">
-        <div className="h-14 border-b border-gray-100 flex items-center justify-between px-4 bg-white sticky top-0 z-20">
-          <div className="flex gap-4">
-            <button
-              onClick={() => setActiveTab('INPUTS')}
-              className={`text-sm font-bold px-2 py-4 border-b-2 transition-colors ${activeTab === 'INPUTS' ? 'border-black text-black' : 'border-transparent text-gray-400'}`}
-            >
-              내용
-            </button>
-            <button
-              onClick={() => setActiveTab('STYLES')}
-              className={`text-sm font-bold px-2 py-4 border-b-2 transition-colors ${activeTab === 'STYLES' ? 'border-black text-black' : 'border-transparent text-gray-400'}`}
-            >
-              스타일
-            </button>
-          </div>
-
-          <div className="flex gap-3 items-center">
-            <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 select-none cursor-pointer">
-              <input
-                type="checkbox"
-                checked={exportCollapsed}
-                onChange={(e) => setExportCollapsed(e.target.checked)}
-                className="rounded border-gray-300"
-              />
-              모두 접힘
-            </label>
-
-            {/* Single PC/Mobile toggle for both preview + export */}
-            <div className="flex rounded overflow-hidden border border-gray-200">
+    <div className="flex flex-col md:flex-row w-screen min-h-screen md:h-screen bg-gray-100 overflow-x-hidden md:overflow-hidden">
+      <div className="w-full md:w-1/2 md:min-w-[400px] flex flex-col border-b md:border-b-0 md:border-r border-gray-200 bg-white shadow-xl z-10">
+        <div className="border-b border-gray-100 bg-white sticky top-0 z-20">
+          <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 md:px-4 md:py-0 md:h-14">
+            <div className="flex gap-2 md:gap-4">
               <button
-                onClick={() => setViewMode('desktop')}
-                className={`text-[10px] font-bold px-2 py-1 ${viewMode === 'desktop' ? 'bg-black text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
-                title="PC (미리보기 + 내보내기)"
+                onClick={() => setActiveTab('INPUTS')}
+                className={`text-xs md:text-sm font-bold px-2 py-2 md:py-4 border-b-2 transition-colors ${activeTab === 'INPUTS' ? 'border-black text-black' : 'border-transparent text-gray-400'}`}
               >
-                PC
+                내용
               </button>
               <button
-                onClick={() => setViewMode('mobile')}
-                className={`text-[10px] font-bold px-2 py-1 ${viewMode === 'mobile' ? 'bg-black text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
-                title="모바일 (미리보기 + 내보내기)"
+                onClick={() => setActiveTab('STYLES')}
+                className={`text-xs md:text-sm font-bold px-2 py-2 md:py-4 border-b-2 transition-colors ${activeTab === 'STYLES' ? 'border-black text-black' : 'border-transparent text-gray-400'}`}
               >
-                모바일
+                스타일
               </button>
             </div>
 
-            <button onClick={clearDraft} className="text-xs font-bold text-gray-400 hover:text-gray-600 px-3 py-2">
-              초기화
-            </button>
+            <div className="flex flex-wrap gap-2 md:gap-3 items-center justify-end w-full md:w-auto">
+              <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 select-none cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={exportCollapsed}
+                  onChange={(e) => setExportCollapsed(e.target.checked)}
+                  className="rounded border-gray-300"
+                />
+                모두 접힘
+              </label>
 
-            <button
-              onClick={handleCopyHTML}
-              className="text-xs font-bold bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
-            >
-              HTML 복사
-            </button>
+              {/* Single PC/Mobile toggle for both preview + export */}
+              <div className="flex rounded overflow-hidden border border-gray-200">
+                <button
+                  onClick={() => setViewMode('desktop')}
+                  className={`text-[10px] font-bold px-2 py-1 ${viewMode === 'desktop' ? 'bg-black text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+                  title="PC (미리보기 + 내보내기)"
+                >
+                  PC
+                </button>
+                <button
+                  onClick={() => setViewMode('mobile')}
+                  className={`text-[10px] font-bold px-2 py-1 ${viewMode === 'mobile' ? 'bg-black text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+                  title="모바일 (미리보기 + 내보내기)"
+                >
+                  모바일
+                </button>
+              </div>
 
-            <button
-              onClick={handleDownloadHTML}
-              className="text-xs font-bold bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors"
-            >
-              다운로드
-            </button>
+              <button onClick={clearDraft} className="text-[11px] md:text-xs font-bold text-gray-400 hover:text-gray-600 px-2 md:px-3 py-1.5 md:py-2">
+                초기화
+              </button>
+
+              <button
+                onClick={handleCopyHTML}
+                className="text-[11px] md:text-xs font-bold bg-blue-600 text-white px-3 md:px-4 py-1.5 md:py-2 rounded hover:bg-blue-700 transition-colors"
+              >
+                HTML 복사
+              </button>
+
+              <button
+                onClick={handleDownloadHTML}
+                className="text-[11px] md:text-xs font-bold bg-black text-white px-3 md:px-4 py-1.5 md:py-2 rounded hover:bg-gray-800 transition-colors"
+              >
+                다운로드
+              </button>
+            </div>
           </div>
         </div>
 
         <div className="flex-1 overflow-y-auto custom-scrollbar">
           {activeTab === 'INPUTS' && (
-            <div className="p-6 space-y-6">
+            <div className="p-4 md:p-6 space-y-6">
               <div>
                 <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">기본 정보</label>
                 <div className="space-y-3">
@@ -884,7 +886,7 @@ export const NovelEditor = () => {
           )}
 
           {activeTab === 'STYLES' && (
-            <div className="p-6 space-y-6">
+            <div className="p-4 md:p-6 space-y-6">
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">프리셋</label>
@@ -1149,8 +1151,8 @@ export const NovelEditor = () => {
         </div>
       </div>
 
-      <div className="w-1/2 h-full bg-gray-200 overflow-hidden flex flex-col relative">
-        <div className="absolute top-4 right-4 z-10 bg-black/80 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-sm pointer-events-none">
+      <div className="w-full md:w-1/2 bg-gray-200 md:h-full border-t md:border-t-0 overflow-hidden flex flex-col relative min-h-[60vh] md:min-h-0">
+        <div className="absolute top-2 right-2 md:top-4 md:right-4 z-10 bg-black/80 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-sm pointer-events-none">
           실시간 미리보기
         </div>
         <div className="flex-1 overflow-y-auto w-full custom-scrollbar">
