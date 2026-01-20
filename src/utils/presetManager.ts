@@ -1,4 +1,4 @@
-import { StylePreset, NovelStyle } from '../types';
+import { StylePreset } from '../types';
 
 export function exportPresetsToFile(presets: StylePreset[]): void {
   const json = JSON.stringify(presets, null, 2);
