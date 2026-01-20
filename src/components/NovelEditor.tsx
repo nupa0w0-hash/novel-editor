@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { NovelEpisode, NovelStyle, Chapter, Section, StylePreset } from '../types';
+import { NovelEpisode, NovelStyle, Chapter, Section, StylePreset, ViewMode } from '../types';
 import { NovelPreview } from './NovelPreview';
 import { generateHTML, copyHTMLToClipboard, downloadHTML, CollapseMode } from '../utils/htmlExporter';
 import { exportPresetsToFile, importPresetsFromFile } from '../utils/presetManager';
@@ -283,6 +283,7 @@ const generateId = () => Math.random().toString(36).substr(2, 9);
 
 export const NovelEditor = () => {
   const [activeTab, setActiveTab] = useState<'INPUTS' | 'STYLES'>('INPUTS');
+  const [viewMode, setViewMode] = useState<ViewMode>('desktop');
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [tags, setTags] = useState('');
@@ -334,7 +335,6 @@ export const NovelEditor = () => {
   }, []);
 
   useEffect(() => {
-    // Combine all chapters into blocks
     const allContent = chapters.map(ch => ch.content).join('\n\n');
     const paragraphs = allContent.split(/\n\n+/);
     const blocks = paragraphs.map(p => ({ type: 'paragraph' as const, text: p }));
@@ -369,7 +369,6 @@ export const NovelEditor = () => {
     }));
   }, [title, author, tags, subtitle, heroImageUrl, titlePosition, heroImageLayout, heroImageAspectRatio, chapters, style, titleColor, subtitleColor, authorColor]);
 
-  // Chapter functions
   const addChapter = () => {
     const newChapter: Chapter = {
       id: generateId(),
@@ -424,7 +423,6 @@ export const NovelEditor = () => {
     setChapters(chapters.map(ch => ({ ...ch, isCollapsed: false })));
   };
 
-  // Section functions
   const addSection = (chapterId: string) => {
     setChapters(chapters.map(ch => {
       if (ch.id === chapterId) {
@@ -497,7 +495,6 @@ export const NovelEditor = () => {
     }));
   };
 
-  // Preset functions
   const saveCustomPreset = () => {
     if (!presetName.trim()) {
       alert('프리셋 이름을 입력하세요.');
@@ -544,7 +541,7 @@ export const NovelEditor = () => {
     try {
       const html = generateHTML(previewEpisode, mode);
       await copyHTMLToClipboard(html);
-      alert(`HTML이 복사되었습니다! (${mode === 'all-expanded' ? '모두 펼침' : '모두 접힘'})`);
+      alert(`HTML이 복사되었습니다! (${mode === 'all-expanded' ? '모두 펼침' : '모두 접힘'}`);
       setShowExportMenu(false);
     } catch (err) {
       console.error('Copy failed', err);
@@ -629,7 +626,6 @@ export const NovelEditor = () => {
         <div className="flex-1 overflow-y-auto custom-scrollbar">
           {activeTab === 'INPUTS' && (
             <div className="p-6 space-y-6">
-              {/* Meta Info */}
               <div>
                 <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">기본 정보</label>
                 <div className="space-y-3">
@@ -665,7 +661,6 @@ export const NovelEditor = () => {
 
               <div className="h-px bg-gray-100 w-full"></div>
 
-              {/* Hero Image */}
               <div>
                 <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">히어로 이미지</label>
                 <div className="space-y-3">
@@ -730,7 +725,6 @@ export const NovelEditor = () => {
 
               <div className="h-px bg-gray-100 w-full"></div>
 
-              {/* Chapters */}
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">챕터</label>
@@ -746,7 +740,6 @@ export const NovelEditor = () => {
                 <div className="space-y-3">
                   {chapters.map((chapter, index) => (
                     <div key={chapter.id} className="border border-gray-200 rounded-lg overflow-hidden">
-                      {/* Chapter Header */}
                       <div 
                         className="flex items-center gap-2 px-3 py-2 bg-gray-50 cursor-pointer hover:bg-gray-100"
                         onClick={() => toggleCollapse(chapter.id)}
@@ -788,10 +781,8 @@ export const NovelEditor = () => {
                         </div>
                       </div>
 
-                      {/* Chapter Content */}
                       {!chapter.isCollapsed && (
                         <div className="p-3 space-y-3">
-                          {/* Main Content */}
                           <div>
                             <textarea
                               className="w-full min-h-[150px] resize-none outline-none text-sm leading-relaxed text-gray-700 placeholder-gray-300"
@@ -801,7 +792,6 @@ export const NovelEditor = () => {
                             />
                           </div>
 
-                          {/* Sections */}
                           <div className="border-t pt-3">
                             <div className="flex items-center justify-between mb-2">
                               <label className="text-[10px] font-bold text-gray-500 uppercase">소제목</label>
@@ -817,7 +807,6 @@ export const NovelEditor = () => {
                               <div className="space-y-2">
                                 {chapter.sections.map((section, sIndex) => (
                                   <div key={section.id} className="border border-gray-200 rounded overflow-hidden">
-                                    {/* Section Header */}
                                     <div 
                                       className="flex items-center gap-2 px-2 py-1.5 bg-gray-50 cursor-pointer hover:bg-gray-100"
                                       onClick={() => toggleSectionCollapse(chapter.id, section.id)}
@@ -856,7 +845,6 @@ export const NovelEditor = () => {
                                       </div>
                                     </div>
 
-                                    {/* Section Content */}
                                     {!section.isCollapsed && (
                                       <div className="p-2">
                                         <textarea
@@ -883,7 +871,6 @@ export const NovelEditor = () => {
 
           {activeTab === 'STYLES' && (
             <div className="p-6 space-y-6">
-              {/* Presets */}
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">프리셋</label>
@@ -935,7 +922,6 @@ export const NovelEditor = () => {
 
               <div className="h-px bg-gray-100 w-full"></div>
 
-              {/* Typography */}
               <div>
                 <label className="block text-xs font-bold text-gray-400 uppercase mb-3 tracking-wider">타이포그래피</label>
                 <div className="space-y-4">
@@ -987,7 +973,6 @@ export const NovelEditor = () => {
 
               <div className="h-px bg-gray-100 w-full"></div>
 
-              {/* Header Colors */}
               <div>
                 <label className="block text-xs font-bold text-gray-400 uppercase mb-3 tracking-wider">헤더 색상</label>
                 <div className="grid grid-cols-3 gap-4">
@@ -1017,7 +1002,6 @@ export const NovelEditor = () => {
 
               <div className="h-px bg-gray-100 w-full"></div>
 
-              {/* Colors */}
               <div>
                 <label className="block text-xs font-bold text-gray-400 uppercase mb-3 tracking-wider">배경 색상</label>
                 <div className="grid grid-cols-2 gap-4">
@@ -1056,7 +1040,6 @@ export const NovelEditor = () => {
 
               <div className="h-px bg-gray-100 w-full"></div>
 
-              {/* Dialogue Highlight */}
               <div>
                 <label className="block text-xs font-bold text-gray-400 uppercase mb-3 tracking-wider">대화 하이라이트</label>
                 <div className="flex gap-4 p-4 rounded-lg border border-gray-100 bg-gray-50">
@@ -1078,7 +1061,6 @@ export const NovelEditor = () => {
 
               <div className="h-px bg-gray-100 w-full"></div>
 
-              {/* Chapter Box Styles */}
               <div>
                 <label className="block text-xs font-bold text-gray-400 uppercase mb-3 tracking-wider">챕터 박스 스타일</label>
                 <div className="grid grid-cols-2 gap-4">
@@ -1132,7 +1114,6 @@ export const NovelEditor = () => {
                   </div>
                 </div>
                 
-                {/* Preview Box */}
                 <div className="mt-4 p-4 rounded-lg border-2" style={{
                   backgroundColor: style.chapterBg || style.cardBg,
                   borderColor: style.chapterBorder || '#e5e7eb'
@@ -1154,11 +1135,33 @@ export const NovelEditor = () => {
       </div>
 
       <div className="w-1/2 h-full bg-gray-200 overflow-hidden flex flex-col relative">
+        <div className="absolute top-4 left-4 z-10 flex gap-2">
+          <button
+            onClick={() => setViewMode('mobile')}
+            className={`text-xs font-bold px-3 py-1.5 rounded transition-all ${
+              viewMode === 'mobile'
+                ? 'bg-black text-white'
+                : 'bg-white/90 text-gray-600 hover:bg-white'
+            }`}
+          >
+            📱 모바일
+          </button>
+          <button
+            onClick={() => setViewMode('desktop')}
+            className={`text-xs font-bold px-3 py-1.5 rounded transition-all ${
+              viewMode === 'desktop'
+                ? 'bg-black text-white'
+                : 'bg-white/90 text-gray-600 hover:bg-white'
+            }`}
+          >
+            💻 PC
+          </button>
+        </div>
         <div className="absolute top-4 right-4 z-10 bg-black/80 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-sm pointer-events-none">
           실시간 미리보기
         </div>
         <div className="flex-1 overflow-y-auto w-full custom-scrollbar">
-          {previewEpisode && <NovelPreview episode={previewEpisode} />}
+          {previewEpisode && <NovelPreview episode={previewEpisode} viewMode={viewMode} />}
         </div>
       </div>
     </div>
