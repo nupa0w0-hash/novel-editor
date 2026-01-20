@@ -1,4 +1,3 @@
-import React from 'react';
 import { NovelEditor } from './components/NovelEditor';
 
 function App() {
