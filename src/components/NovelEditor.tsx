@@ -588,7 +588,7 @@ export const NovelEditor = () => {
       <div className={`${uiTheme === 'dark' ? 'dark' : ''} w-full md:w-1/2 md:min-w-[400px]`}>
         <div className="flex flex-col border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 shadow-xl z-10 text-gray-900 dark:text-gray-100">
           <div className="border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950 sticky top-0 z-20">
-            <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 md:px-4 md:py-0 md:h-14">
+            <div className="flex items-center justify-between gap-2 px-3 py-2 md:px-4 md:py-0 md:h-14">
               <div className="flex gap-2 md:gap-4">
                 <button
                   onClick={() => setActiveTab('INPUTS')}
@@ -604,48 +604,8 @@ export const NovelEditor = () => {
                 </button>
               </div>
 
-              <div className="flex flex-wrap gap-2 md:gap-3 items-center justify-end w-full md:w-auto">
-                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 dark:text-gray-300 select-none cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={exportCollapsed}
-                    onChange={(e) => setExportCollapsed(e.target.checked)}
-                    className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-900"
-                  />
-                  모두 접힘
-                </label>
-
-                {/* PC/Mobile toggle for both preview + export */}
-                <div className="flex rounded overflow-hidden border border-gray-200 dark:border-gray-700">
-                  <button
-                    onClick={() => setViewMode('desktop')}
-                    className={`text-[10px] font-bold px-2 py-1 ${viewMode === 'desktop' ? 'bg-black text-white dark:bg-white dark:text-black' : 'bg-white text-gray-500 hover:bg-gray-50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-gray-900'}`}
-                    title="PC (미리보기 + 내보내기)"
-                  >
-                    PC
-                  </button>
-                  <button
-                    onClick={() => setViewMode('mobile')}
-                    className={`text-[10px] font-bold px-2 py-1 ${viewMode === 'mobile' ? 'bg-black text-white dark:bg-white dark:text-black' : 'bg-white text-gray-500 hover:bg-gray-50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-gray-900'}`}
-                    title="모바일 (미리보기 + 내보내기)"
-                  >
-                    모바일
-                  </button>
-                </div>
-
-                {/* Editor UI theme toggle (preview excluded) */}
-                <button
-                  onClick={() => setUiTheme(uiTheme === 'dark' ? 'light' : 'dark')}
-                  className="text-[11px] md:text-xs font-bold px-2 md:px-3 py-1.5 md:py-2 rounded border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-900"
-                  title="에디터 UI 다크모드 (미리보기 제외)"
-                >
-                  {uiTheme === 'dark' ? '라이트' : '다크'}
-                </button>
-
-                <button onClick={clearDraft} className="text-[11px] md:text-xs font-bold text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 px-2 md:px-3 py-1.5 md:py-2">
-                  초기화
-                </button>
-
+              {/* Primary actions + options (to keep header clean) */}
+              <div className="flex items-center gap-2 md:gap-3">
                 <button
                   onClick={handleCopyHTML}
                   className="text-[11px] md:text-xs font-bold bg-blue-600 text-white px-3 md:px-4 py-1.5 md:py-2 rounded hover:bg-blue-700 transition-colors"
@@ -659,6 +619,71 @@ export const NovelEditor = () => {
                 >
                   다운로드
                 </button>
+
+                <details className="relative">
+                  <summary
+                    className="text-[11px] md:text-xs font-bold px-2 md:px-3 py-1.5 md:py-2 rounded border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-900 cursor-pointer select-none [&::-webkit-details-marker]:hidden"
+                    title="옵션"
+                  >
+                    옵션
+                  </summary>
+
+                  <div className="absolute right-0 mt-2 w-64 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 shadow-xl p-3 z-50">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold text-gray-500 dark:text-gray-300">에디터 테마</span>
+                        <button
+                          onClick={() => setUiTheme(uiTheme === 'dark' ? 'light' : 'dark')}
+                          className="text-[11px] font-bold px-2 py-1 rounded border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-900"
+                          title="에디터 UI 다크모드 (미리보기 제외)"
+                        >
+                          {uiTheme === 'dark' ? '라이트' : '다크'}
+                        </button>
+                      </div>
+
+                      <div className="h-px bg-gray-100 dark:bg-gray-800 w-full" />
+
+                      <label className="flex items-center justify-between gap-3 text-[11px] font-bold text-gray-500 dark:text-gray-300 select-none cursor-pointer">
+                        <span>모두 접힘 (내보내기)</span>
+                        <input
+                          type="checkbox"
+                          checked={exportCollapsed}
+                          onChange={(e) => setExportCollapsed(e.target.checked)}
+                          className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-900"
+                        />
+                      </label>
+
+                      <div>
+                        <div className="text-[11px] font-bold text-gray-500 dark:text-gray-300 mb-1">미리보기/내보내기</div>
+                        <div className="flex rounded overflow-hidden border border-gray-200 dark:border-gray-700">
+                          <button
+                            onClick={() => setViewMode('desktop')}
+                            className={`text-[10px] font-bold px-2 py-1 ${viewMode === 'desktop' ? 'bg-black text-white dark:bg-white dark:text-black' : 'bg-white text-gray-500 hover:bg-gray-50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-gray-900'}`}
+                            title="PC (미리보기 + 내보내기)"
+                          >
+                            PC
+                          </button>
+                          <button
+                            onClick={() => setViewMode('mobile')}
+                            className={`text-[10px] font-bold px-2 py-1 ${viewMode === 'mobile' ? 'bg-black text-white dark:bg-white dark:text-black' : 'bg-white text-gray-500 hover:bg-gray-50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-gray-900'}`}
+                            title="모바일 (미리보기 + 내보내기)"
+                          >
+                            모바일
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="h-px bg-gray-100 dark:bg-gray-800 w-full" />
+
+                      <button
+                        onClick={clearDraft}
+                        className="w-full text-left text-[11px] font-bold text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 px-2 py-1.5 rounded hover:bg-gray-50 dark:hover:bg-gray-900"
+                      >
+                        초기화
+                      </button>
+                    </div>
+                  </div>
+                </details>
               </div>
             </div>
           </div>
