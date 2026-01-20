@@ -9,6 +9,11 @@ export interface NovelStyle {
   fontSize: number;
   lineHeight: number;
   letterSpacing: number;
+  // Chapter box styles
+  chapterBg: string;
+  chapterBorder: string;
+  chapterTitleBg: string;
+  chapterTitleText: string;
 }
 
 export interface NovelHeader {
@@ -29,11 +34,19 @@ export interface EpisodeBlock {
   text: string;
 }
 
+export interface Section {
+  id: string;
+  subtitle: string;
+  content: string;
+  isCollapsed: boolean;
+}
+
 export interface Chapter {
   id: string;
   title: string;
   content: string;
   isCollapsed: boolean;
+  sections: Section[];
 }
 
 export interface NovelEpisode {
