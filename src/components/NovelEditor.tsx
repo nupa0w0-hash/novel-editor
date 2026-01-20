@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { NovelEpisode, NovelStyle, Chapter, Section, StylePreset } from '../types';
 import { NovelPreview } from './NovelPreview';
-import { generateHTML, copyHTMLToClipboard, downloadHTML } from '../utils/htmlExporter';
+import { generateHTML, copyHTMLToClipboard, downloadHTML, CollapseMode } from '../utils/htmlExporter';
 import { exportPresetsToFile, importPresetsFromFile } from '../utils/presetManager';
 
 const FONT_PRESETS = [
@@ -298,6 +298,7 @@ export const NovelEditor = () => {
   const [customPresets, setCustomPresets] = useState<StylePreset[]>([]);
   const [presetName, setPresetName] = useState('');
   const [previewEpisode, setPreviewEpisode] = useState<NovelEpisode | null>(null);
+  const [showExportMenu, setShowExportMenu] = useState(false);
   
   // Chapter system
   const [chapters, setChapters] = useState<Chapter[]>([
@@ -538,22 +539,24 @@ export const NovelEditor = () => {
     }
   };
 
-  const handleCopyHTML = async () => {
+  const handleCopyHTML = async (mode: CollapseMode) => {
     if (!previewEpisode) return;
     try {
-      const html = generateHTML(previewEpisode);
+      const html = generateHTML(previewEpisode, mode);
       await copyHTMLToClipboard(html);
-      alert('HTML이 복사되었습니다! 아카라이브 게시판에 바로 붙여넣기 하세요.');
+      alert(`HTML이 복사되었습니다! (${mode === 'all-expanded' ? '모두 펼침' : '모두 접힘'})`);
+      setShowExportMenu(false);
     } catch (err) {
       console.error('Copy failed', err);
       alert('복사에 실패했습니다');
     }
   };
 
-  const handleDownloadHTML = () => {
+  const handleDownloadHTML = (mode: CollapseMode) => {
     if (!previewEpisode) return;
-    const html = generateHTML(previewEpisode);
+    const html = generateHTML(previewEpisode, mode);
     downloadHTML(html, title || 'novel');
+    setShowExportMenu(false);
   };
 
   const clearDraft = () => {
@@ -586,14 +589,38 @@ export const NovelEditor = () => {
               스타일
             </button>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 relative">
             <button onClick={clearDraft} className="text-xs font-bold text-gray-400 hover:text-gray-600 px-3 py-2">
               초기화
             </button>
-            <button onClick={handleCopyHTML} className="text-xs font-bold bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
-              HTML 복사
-            </button>
-            <button onClick={handleDownloadHTML} className="text-xs font-bold bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors">
+            <div className="relative">
+              <button 
+                onClick={() => setShowExportMenu(!showExportMenu)} 
+                className="text-xs font-bold bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors flex items-center gap-1"
+              >
+                HTML 복사 ▼
+              </button>
+              {showExportMenu && (
+                <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded shadow-lg z-30 min-w-[150px]">
+                  <button
+                    onClick={() => handleCopyHTML('all-expanded')}
+                    className="w-full text-left px-3 py-2 text-xs hover:bg-gray-50 border-b border-gray-100"
+                  >
+                    모두 펼침으로 복사
+                  </button>
+                  <button
+                    onClick={() => handleCopyHTML('all-collapsed')}
+                    className="w-full text-left px-3 py-2 text-xs hover:bg-gray-50"
+                  >
+                    모두 접힘으로 복사
+                  </button>
+                </div>
+              )}
+            </div>
+            <button 
+              onClick={() => handleDownloadHTML('all-expanded')} 
+              className="text-xs font-bold bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors"
+            >
               다운로드
             </button>
           </div>
