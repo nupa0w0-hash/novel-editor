@@ -27,17 +27,182 @@ const DEFAULT_PRESETS: StylePreset[] = [
     }
   },
   {
-    name: 'Warm Sepia',
+    name: 'Midnight Blue',
+    style: {
+      fontFamily: 'Noto Serif KR, serif',
+      outerBg: '#0f172a',
+      transparentOuter: false,
+      cardBg: '#1e293b',
+      bodyText: '#e2e8f0',
+      highlightBg: '#334155',
+      highlightText: '#38bdf8',
+      fontSize: 14.2,
+      lineHeight: 1.8,
+      letterSpacing: -0.3
+    }
+  },
+  {
+    name: 'Soft Lavender',
     style: {
       fontFamily: 'Nanum Myeongjo, serif',
-      outerBg: '#f5f5f4',
+      outerBg: '#faf5ff',
       transparentOuter: false,
-      cardBg: '#fffbf0',
-      bodyText: '#44403c',
-      highlightBg: '#fef3c7',
-      highlightText: '#92400e',
+      cardBg: '#ffffff',
+      bodyText: '#4c1d95',
+      highlightBg: '#f3e8ff',
+      highlightText: '#7c3aed',
+      fontSize: 14.5,
+      lineHeight: 1.8,
+      letterSpacing: -0.4
+    }
+  },
+  {
+    name: 'Ocean Breeze',
+    style: {
+      fontFamily: 'Pretendard, sans-serif',
+      outerBg: '#ecfeff',
+      transparentOuter: false,
+      cardBg: '#ffffff',
+      bodyText: '#164e63',
+      highlightBg: '#cffafe',
+      highlightText: '#0891b2',
       fontSize: 14.2,
-      lineHeight: 1.7,
+      lineHeight: 1.75,
+      letterSpacing: -0.3
+    }
+  },
+  {
+    name: 'Warm Coffee',
+    style: {
+      fontFamily: 'Noto Serif KR, serif',
+      outerBg: '#fef3c7',
+      transparentOuter: false,
+      cardBg: '#fffbeb',
+      bodyText: '#78350f',
+      highlightBg: '#fed7aa',
+      highlightText: '#92400e',
+      fontSize: 14.5,
+      lineHeight: 1.8,
+      letterSpacing: -0.5
+    }
+  },
+  {
+    name: 'Emerald Garden',
+    style: {
+      fontFamily: 'Nanum Myeongjo, serif',
+      outerBg: '#f0fdf4',
+      transparentOuter: false,
+      cardBg: '#ffffff',
+      bodyText: '#14532d',
+      highlightBg: '#d1fae5',
+      highlightText: '#047857',
+      fontSize: 14.2,
+      lineHeight: 1.8,
+      letterSpacing: -0.4
+    }
+  },
+  {
+    name: 'Sunset Glow',
+    style: {
+      fontFamily: 'Pretendard, sans-serif',
+      outerBg: '#fff7ed',
+      transparentOuter: false,
+      cardBg: '#ffffff',
+      bodyText: '#7c2d12',
+      highlightBg: '#fed7aa',
+      highlightText: '#ea580c',
+      fontSize: 14.2,
+      lineHeight: 1.75,
+      letterSpacing: -0.3
+    }
+  },
+  {
+    name: 'Cherry Blossom',
+    style: {
+      fontFamily: 'Noto Serif KR, serif',
+      outerBg: '#fdf2f8',
+      transparentOuter: false,
+      cardBg: '#ffffff',
+      bodyText: '#831843',
+      highlightBg: '#fce7f3',
+      highlightText: '#be185d',
+      fontSize: 14.5,
+      lineHeight: 1.8,
+      letterSpacing: -0.5
+    }
+  },
+  {
+    name: 'Deep Purple',
+    style: {
+      fontFamily: 'Pretendard, sans-serif',
+      outerBg: '#1e1b4b',
+      transparentOuter: false,
+      cardBg: '#312e81',
+      bodyText: '#e0e7ff',
+      highlightBg: '#4338ca',
+      highlightText: '#a5b4fc',
+      fontSize: 14.2,
+      lineHeight: 1.75,
+      letterSpacing: -0.2
+    }
+  },
+  {
+    name: 'Mint Fresh',
+    style: {
+      fontFamily: 'Nanum Myeongjo, serif',
+      outerBg: '#f0fdfa',
+      transparentOuter: false,
+      cardBg: '#ffffff',
+      bodyText: '#134e4a',
+      highlightBg: '#ccfbf1',
+      highlightText: '#0f766e',
+      fontSize: 14.2,
+      lineHeight: 1.8,
+      letterSpacing: -0.4
+    }
+  },
+  {
+    name: 'Slate Elegance',
+    style: {
+      fontFamily: 'Noto Serif KR, serif',
+      outerBg: '#f8fafc',
+      transparentOuter: false,
+      cardBg: '#ffffff',
+      bodyText: '#1e293b',
+      highlightBg: '#e2e8f0',
+      highlightText: '#475569',
+      fontSize: 14.5,
+      lineHeight: 1.8,
+      letterSpacing: -0.5
+    }
+  },
+  {
+    name: 'Golden Hour',
+    style: {
+      fontFamily: 'Pretendard, sans-serif',
+      outerBg: '#fffbeb',
+      transparentOuter: false,
+      cardBg: '#fefce8',
+      bodyText: '#713f12',
+      highlightBg: '#fef3c7',
+      highlightText: '#a16207',
+      fontSize: 14.2,
+      lineHeight: 1.75,
+      letterSpacing: -0.3
+    }
+  },
+  {
+    name: 'Royal Indigo',
+    style: {
+      fontFamily: 'Noto Serif KR, serif',
+      outerBg: '#f0f9ff',
+      transparentOuter: false,
+      cardBg: '#ffffff',
+      bodyText: '#1e3a8a',
+      highlightBg: '#dbeafe',
+      highlightText: '#1d4ed8',
+      fontSize: 14.5,
+      lineHeight: 1.8,
       letterSpacing: -0.5
     }
   },
@@ -51,51 +216,6 @@ const DEFAULT_PRESETS: StylePreset[] = [
       bodyText: '#e5e7eb',
       highlightBg: '#374151',
       highlightText: '#fbbf24',
-      fontSize: 14.2,
-      lineHeight: 1.7,
-      letterSpacing: -0.5
-    }
-  },
-  {
-    name: 'Rose',
-    style: {
-      fontFamily: 'Noto Serif KR, serif',
-      outerBg: '#fff1f2',
-      transparentOuter: false,
-      cardBg: '#fff',
-      bodyText: '#881337',
-      highlightBg: '#ffe4e6',
-      highlightText: '#9f1239',
-      fontSize: 14.2,
-      lineHeight: 1.7,
-      letterSpacing: -0.5
-    }
-  },
-  {
-    name: 'Forest',
-    style: {
-      fontFamily: 'Noto Serif KR, serif',
-      outerBg: '#f0fdf4',
-      transparentOuter: false,
-      cardBg: '#fff',
-      bodyText: '#14532d',
-      highlightBg: '#dcfce7',
-      highlightText: '#166534',
-      fontSize: 14.2,
-      lineHeight: 1.7,
-      letterSpacing: -0.5
-    }
-  },
-  {
-    name: 'Noir',
-    style: {
-      fontFamily: 'Pretendard, sans-serif',
-      outerBg: '#000000',
-      transparentOuter: false,
-      cardBg: '#111111',
-      bodyText: '#a3a3a3',
-      highlightBg: '#262626',
-      highlightText: '#d4d4d4',
       fontSize: 14.2,
       lineHeight: 1.7,
       letterSpacing: -0.5
