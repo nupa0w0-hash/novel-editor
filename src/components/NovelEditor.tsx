@@ -23,7 +23,11 @@ const DEFAULT_PRESETS: StylePreset[] = [
       highlightText: '#3730a3',
       fontSize: 14.2,
       lineHeight: 1.7,
-      letterSpacing: -0.5
+      letterSpacing: -0.5,
+      chapterBg: '#f9fafb',
+      chapterBorder: '#e5e7eb',
+      chapterTitleBg: '#f3f4f6',
+      chapterTitleText: '#111827'
     }
   },
   {
@@ -38,7 +42,11 @@ const DEFAULT_PRESETS: StylePreset[] = [
       highlightText: '#38bdf8',
       fontSize: 14.2,
       lineHeight: 1.8,
-      letterSpacing: -0.3
+      letterSpacing: -0.3,
+      chapterBg: '#1e293b',
+      chapterBorder: '#334155',
+      chapterTitleBg: '#334155',
+      chapterTitleText: '#38bdf8'
     }
   },
   {
@@ -53,7 +61,11 @@ const DEFAULT_PRESETS: StylePreset[] = [
       highlightText: '#7c3aed',
       fontSize: 14.5,
       lineHeight: 1.8,
-      letterSpacing: -0.4
+      letterSpacing: -0.4,
+      chapterBg: '#faf5ff',
+      chapterBorder: '#e9d5ff',
+      chapterTitleBg: '#f3e8ff',
+      chapterTitleText: '#6b21a8'
     }
   },
   {
@@ -68,7 +80,11 @@ const DEFAULT_PRESETS: StylePreset[] = [
       highlightText: '#0891b2',
       fontSize: 14.2,
       lineHeight: 1.75,
-      letterSpacing: -0.3
+      letterSpacing: -0.3,
+      chapterBg: '#ecfeff',
+      chapterBorder: '#a5f3fc',
+      chapterTitleBg: '#cffafe',
+      chapterTitleText: '#0e7490'
     }
   },
   {
@@ -83,7 +99,11 @@ const DEFAULT_PRESETS: StylePreset[] = [
       highlightText: '#92400e',
       fontSize: 14.5,
       lineHeight: 1.8,
-      letterSpacing: -0.5
+      letterSpacing: -0.5,
+      chapterBg: '#fffbeb',
+      chapterBorder: '#fed7aa',
+      chapterTitleBg: '#fef3c7',
+      chapterTitleText: '#78350f'
     }
   },
   {
@@ -98,7 +118,11 @@ const DEFAULT_PRESETS: StylePreset[] = [
       highlightText: '#047857',
       fontSize: 14.2,
       lineHeight: 1.8,
-      letterSpacing: -0.4
+      letterSpacing: -0.4,
+      chapterBg: '#f0fdf4',
+      chapterBorder: '#a7f3d0',
+      chapterTitleBg: '#d1fae5',
+      chapterTitleText: '#065f46'
     }
   },
   {
@@ -113,7 +137,11 @@ const DEFAULT_PRESETS: StylePreset[] = [
       highlightText: '#ea580c',
       fontSize: 14.2,
       lineHeight: 1.75,
-      letterSpacing: -0.3
+      letterSpacing: -0.3,
+      chapterBg: '#fff7ed',
+      chapterBorder: '#fed7aa',
+      chapterTitleBg: '#ffedd5',
+      chapterTitleText: '#9a3412'
     }
   },
   {
@@ -128,7 +156,11 @@ const DEFAULT_PRESETS: StylePreset[] = [
       highlightText: '#be185d',
       fontSize: 14.5,
       lineHeight: 1.8,
-      letterSpacing: -0.5
+      letterSpacing: -0.5,
+      chapterBg: '#fdf2f8',
+      chapterBorder: '#fbcfe8',
+      chapterTitleBg: '#fce7f3',
+      chapterTitleText: '#9f1239'
     }
   },
   {
@@ -143,7 +175,11 @@ const DEFAULT_PRESETS: StylePreset[] = [
       highlightText: '#a5b4fc',
       fontSize: 14.2,
       lineHeight: 1.75,
-      letterSpacing: -0.2
+      letterSpacing: -0.2,
+      chapterBg: '#312e81',
+      chapterBorder: '#4338ca',
+      chapterTitleBg: '#4338ca',
+      chapterTitleText: '#c7d2fe'
     }
   },
   {
@@ -158,7 +194,11 @@ const DEFAULT_PRESETS: StylePreset[] = [
       highlightText: '#0f766e',
       fontSize: 14.2,
       lineHeight: 1.8,
-      letterSpacing: -0.4
+      letterSpacing: -0.4,
+      chapterBg: '#f0fdfa',
+      chapterBorder: '#99f6e4',
+      chapterTitleBg: '#ccfbf1',
+      chapterTitleText: '#115e59'
     }
   },
   {
@@ -173,7 +213,11 @@ const DEFAULT_PRESETS: StylePreset[] = [
       highlightText: '#475569',
       fontSize: 14.5,
       lineHeight: 1.8,
-      letterSpacing: -0.5
+      letterSpacing: -0.5,
+      chapterBg: '#f8fafc',
+      chapterBorder: '#cbd5e1',
+      chapterTitleBg: '#e2e8f0',
+      chapterTitleText: '#334155'
     }
   },
   {
@@ -188,7 +232,11 @@ const DEFAULT_PRESETS: StylePreset[] = [
       highlightText: '#a16207',
       fontSize: 14.2,
       lineHeight: 1.75,
-      letterSpacing: -0.3
+      letterSpacing: -0.3,
+      chapterBg: '#fefce8',
+      chapterBorder: '#fef08a',
+      chapterTitleBg: '#fef3c7',
+      chapterTitleText: '#854d0e'
     }
   },
   {
@@ -203,7 +251,11 @@ const DEFAULT_PRESETS: StylePreset[] = [
       highlightText: '#1d4ed8',
       fontSize: 14.5,
       lineHeight: 1.8,
-      letterSpacing: -0.5
+      letterSpacing: -0.5,
+      chapterBg: '#eff6ff',
+      chapterBorder: '#bfdbfe',
+      chapterTitleBg: '#dbeafe',
+      chapterTitleText: '#1e40af'
     }
   },
   {
@@ -218,7 +270,11 @@ const DEFAULT_PRESETS: StylePreset[] = [
       highlightText: '#fbbf24',
       fontSize: 14.2,
       lineHeight: 1.7,
-      letterSpacing: -0.5
+      letterSpacing: -0.5,
+      chapterBg: '#1f2937',
+      chapterBorder: '#374151',
+      chapterTitleBg: '#374151',
+      chapterTitleText: '#fbbf24'
     }
   },
 ];
@@ -245,7 +301,7 @@ export const NovelEditor = () => {
   
   // Chapter system
   const [chapters, setChapters] = useState<Chapter[]>([
-    { id: generateId(), title: '챕터 1', content: '', isCollapsed: false }
+    { id: generateId(), title: '챕터 1', content: '', isCollapsed: false, sections: [] }
   ]);
 
   useEffect(() => {
@@ -318,7 +374,8 @@ export const NovelEditor = () => {
       id: generateId(),
       title: `챕터 ${chapters.length + 1}`,
       content: '',
-      isCollapsed: false
+      isCollapsed: false,
+      sections: []
     };
     setChapters([...chapters, newChapter]);
   };
@@ -433,7 +490,7 @@ export const NovelEditor = () => {
       setTags('');
       setSubtitle('');
       setHeroImageUrl('');
-      setChapters([{ id: generateId(), title: '챕터 1', content: '', isCollapsed: false }]);
+      setChapters([{ id: generateId(), title: '챕터 1', content: '', isCollapsed: false, sections: [] }]);
       localStorage.removeItem('novel_draft');
     }
   };
@@ -840,6 +897,79 @@ export const NovelEditor = () => {
                     <div className="text-sm">
                       미리보기 <span style={{ backgroundColor: style.highlightBg, color: style.highlightText, padding: '2px 4px', borderRadius: '4px' }}>"대화"</span>
                     </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="h-px bg-gray-100 w-full"></div>
+
+              {/* Chapter Box Styles */}
+              <div>
+                <label className="block text-xs font-bold text-gray-400 uppercase mb-3 tracking-wider">챕터 박스 스타일</label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1">챕터 배경</label>
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="color" 
+                        value={style.chapterBg || style.cardBg} 
+                        onChange={e => setStyle({...style, chapterBg: e.target.value})} 
+                        className="w-8 h-8 rounded cursor-pointer" 
+                      />
+                      <span className="text-xs font-mono text-gray-400">{style.chapterBg || style.cardBg}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1">챕터 테두리</label>
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="color" 
+                        value={style.chapterBorder || '#e5e7eb'} 
+                        onChange={e => setStyle({...style, chapterBorder: e.target.value})} 
+                        className="w-8 h-8 rounded cursor-pointer" 
+                      />
+                      <span className="text-xs font-mono text-gray-400">{style.chapterBorder || '#e5e7eb'}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1">제목 배경</label>
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="color" 
+                        value={style.chapterTitleBg || '#f3f4f6'} 
+                        onChange={e => setStyle({...style, chapterTitleBg: e.target.value})} 
+                        className="w-8 h-8 rounded cursor-pointer" 
+                      />
+                      <span className="text-xs font-mono text-gray-400">{style.chapterTitleBg || '#f3f4f6'}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1">제목 텍스트</label>
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="color" 
+                        value={style.chapterTitleText || style.bodyText} 
+                        onChange={e => setStyle({...style, chapterTitleText: e.target.value})} 
+                        className="w-8 h-8 rounded cursor-pointer" 
+                      />
+                      <span className="text-xs font-mono text-gray-400">{style.chapterTitleText || style.bodyText}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Preview Box */}
+                <div className="mt-4 p-4 rounded-lg border-2" style={{
+                  backgroundColor: style.chapterBg || style.cardBg,
+                  borderColor: style.chapterBorder || '#e5e7eb'
+                }}>
+                  <div className="px-3 py-2 rounded-lg mb-3" style={{
+                    backgroundColor: style.chapterTitleBg || '#f3f4f6',
+                    color: style.chapterTitleText || style.bodyText
+                  }}>
+                    <span className="text-sm font-bold">챕터 제목 미리보기</span>
+                  </div>
+                  <div className="text-xs" style={{ color: style.bodyText }}>
+                    챕터 내용이 이렇게 표시됩니다.
                   </div>
                 </div>
               </div>
