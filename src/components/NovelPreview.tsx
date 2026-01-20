@@ -319,7 +319,8 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode, viewMode = 
   };
 
   // Calculate padding based on viewMode
-  const containerPadding = viewMode === 'mobile' ? '3rem 1.5rem' : '3rem 8rem';
+  // 목적: 화면 크기에 따른 극단적인 차이를 줄이기 위해 rem 대신 % 기반 가로 여백 사용
+  const containerPadding = viewMode === 'mobile' ? '3rem 5%' : '3rem 15%';
 
   return (
     <div

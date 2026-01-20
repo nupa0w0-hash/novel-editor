@@ -36,15 +36,17 @@ export function generateHTML(
     heroPadding: '2rem',
   };
 
+  // 미리보기와 동일하게 "가로 여백을 % 기반"으로 맞춰서,
+  // 화면 크기에 따라 너무 극단적으로 달라지지 않게 함
   const layout =
     viewport === 'mobile'
       ? {
           ...baseLayout,
-          innerPadding: '3rem 1.5rem',
+          innerPadding: '3rem 5%',
         }
       : {
           ...baseLayout,
-          innerPadding: '3rem 8rem',
+          innerPadding: '3rem 15%',
         };
 
   // Generate hero image HTML
