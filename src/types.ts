@@ -29,9 +29,22 @@ export interface EpisodeBlock {
   text: string;
 }
 
+export interface Chapter {
+  id: string;
+  title: string;
+  content: string;
+  isCollapsed: boolean;
+}
+
 export interface NovelEpisode {
   title: string;
   header: NovelHeader;
   blocks: EpisodeBlock[];
+  style: NovelStyle;
+  chapters?: Chapter[];
+}
+
+export interface StylePreset {
+  name: string;
   style: NovelStyle;
 }
