@@ -49,6 +49,14 @@ export function generateHTML(
           innerPadding: '3rem 15%',
         };
 
+  // Apply titlePosition also when there is no hero image.
+  // For non-background headers, vertical positions are interpreted as horizontal alignment only.
+  const headerAlignment = getTitleAlignment(header.titlePosition || 'center');
+  const headerTextAlign =
+    headerAlignment.horizontal === 'flex-start' ? 'left' : headerAlignment.horizontal === 'flex-end' ? 'right' : 'center';
+  const headerTagsJustify =
+    headerAlignment.horizontal === 'flex-start' ? 'flex-start' : headerAlignment.horizontal === 'flex-end' ? 'flex-end' : 'center';
+
   // Generate hero image HTML
   let heroImageHTML = '';
   if (header.heroImageUrl) {
@@ -56,10 +64,13 @@ export function generateHTML(
 
     if (header.heroImageLayout === 'background') {
       const alignment = getTitleAlignment(header.titlePosition || 'center');
+      const textAlign =
+        alignment.horizontal === 'flex-start' ? 'left' : alignment.horizontal === 'flex-end' ? 'right' : 'center';
+
       heroImageHTML = `
         <div style="position: relative; width: 100%; padding-bottom: ${paddingBottom}; background-image: url('${header.heroImageUrl}'); background-size: cover; background-position: center; margin-bottom: 2rem;">
           <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: ${alignment.vertical}; justify-content: ${alignment.horizontal}; padding: ${layout.heroPadding};">
-            <div style="text-align: center; color: ${header.titleColor || '#fff'}; text-shadow: 0 2px 8px rgba(0,0,0,0.5);">
+            <div style="text-align: ${textAlign}; color: ${header.titleColor || '#fff'}; text-shadow: 0 2px 8px rgba(0,0,0,0.5);">
               <h1 style="font-size: ${layout.headerTitleSizeBg}; font-weight: 900; margin-bottom: 0.5rem; margin-top: 0;">${escapeHtml(title)}</h1>
               ${header.subtitle ? `<p style="font-size: ${layout.headerSubtitleSizeBg}; color: ${header.subtitleColor || '#fff'}; margin-bottom: 0.5rem; margin-top: 0;">${escapeHtml(header.subtitle)}</p>` : ''}
               ${header.author ? `<p style="font-size: ${layout.headerAuthorSizeBg}; color: ${header.authorColor || '#fff'}; margin-top: 0; margin-bottom: 0;">${escapeHtml(header.author)}</p>` : ''}
@@ -78,13 +89,13 @@ export function generateHTML(
   const headerHTML =
     header.heroImageLayout !== 'background' || !header.heroImageUrl
       ? `
-    <div style="text-align: center; margin-bottom: 3rem;">
+    <div style="text-align: ${headerTextAlign}; margin-bottom: 3rem;">
       <h1 style="font-size: ${layout.headerTitleSize}; font-weight: 900; margin-bottom: 0.5rem; margin-top: 0; color: ${header.titleColor || style.bodyText};">${escapeHtml(title)}</h1>
       ${header.subtitle ? `<p style="font-size: ${layout.headerSubtitleSize}; color: ${header.subtitleColor || style.bodyText}; opacity: 0.7; margin-bottom: 0.5rem; margin-top: 0;">${escapeHtml(header.subtitle)}</p>` : ''}
       ${header.author ? `<p style="font-size: ${layout.headerAuthorSize}; color: ${header.authorColor || style.bodyText}; opacity: 0.6; font-weight: 700; margin-top: 0; margin-bottom: 0;">${escapeHtml(header.author)}</p>` : ''}
       ${
         header.tags && header.tags.length > 0
-          ? `<div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;">${header.tags
+          ? `<div style="display: flex; gap: 0.5rem; justify-content: ${headerTagsJustify}; margin-top: 1rem; flex-wrap: wrap;">${header.tags
               .map(
                 (tag) =>
                   `<span style="background: ${style.highlightBg}; color: ${style.highlightText}; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 700;">${escapeHtml(tag)}</span>`

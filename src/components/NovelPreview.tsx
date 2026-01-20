@@ -22,6 +22,19 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode, viewMode = 
     return map[position] || map.center;
   };
 
+  const getTextAlignFromPosition = (position: string): 'left' | 'center' | 'right' => {
+    const alignment = getTitleAlignment(position);
+    if (alignment.horizontal === 'flex-start') return 'left';
+    if (alignment.horizontal === 'flex-end') return 'right';
+    return 'center';
+  };
+
+  const getJustifyFromTextAlign = (textAlign: 'left' | 'center' | 'right'): 'flex-start' | 'center' | 'flex-end' => {
+    if (textAlign === 'left') return 'flex-start';
+    if (textAlign === 'right') return 'flex-end';
+    return 'center';
+  };
+
   const processDialogue = (text: string): React.ReactNode => {
     const parts: React.ReactNode[] = [];
     let lastIndex = 0;
@@ -87,7 +100,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode, viewMode = 
     '1:1': '100%',
     '3:4': '133.333%',
     '9:16': '177.778%',
-    'original': 'auto',
+    original: 'auto',
   };
 
   const renderHeroImage = () => {
@@ -97,6 +110,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode, viewMode = 
 
     if (header.heroImageLayout === 'background') {
       const alignment = getTitleAlignment(header.titlePosition || 'center');
+      const textAlign = getTextAlignFromPosition(header.titlePosition || 'center');
       return (
         <div
           style={{
@@ -119,7 +133,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode, viewMode = 
               padding: '2rem',
             }}
           >
-            <div style={{ textAlign: 'center', color: header.titleColor || '#fff', textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>
+            <div style={{ textAlign, color: header.titleColor || '#fff', textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>
               <h1 style={{ fontSize: '3rem', fontWeight: 900, marginBottom: '0.5rem' }}>{title}</h1>
               {header.subtitle && <p style={{ fontSize: '1.25rem', color: header.subtitleColor || '#fff', marginBottom: '0.5rem' }}>{header.subtitle}</p>}
               {header.author && <p style={{ fontSize: '1rem', color: header.authorColor || '#fff' }}>{header.author}</p>}
@@ -147,8 +161,13 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode, viewMode = 
   const renderHeader = () => {
     if (header.heroImageLayout === 'background' && header.heroImageUrl) return null;
 
+    // Apply titlePosition even when there is no hero image.
+    // For non-background headers, vertical positions (tl/bl etc.) are interpreted as horizontal alignment only.
+    const textAlign = getTextAlignFromPosition(header.titlePosition || 'center');
+    const tagsJustify = getJustifyFromTextAlign(textAlign);
+
     return (
-      <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+      <div style={{ textAlign, marginBottom: '3rem' }}>
         <h1 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '0.5rem', color: header.titleColor || style.bodyText }}>
           {title}
         </h1>
@@ -163,7 +182,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode, viewMode = 
           </p>
         )}
         {header.tags && header.tags.length > 0 && (
-          <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', marginTop: '1rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', justifyContent: tagsJustify, marginTop: '1rem', flexWrap: 'wrap' }}>
             {header.tags.map((tag, idx) => (
               <span
                 key={idx}
@@ -187,7 +206,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode, viewMode = 
 
   const renderChapter = (chapter: Chapter) => {
     const isCollapsed = collapsedChapters.has(chapter.id);
-    
+
     return (
       <div
         key={chapter.id}
@@ -265,7 +284,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode, viewMode = 
 
   const renderSection = (section: Section) => {
     const isCollapsed = collapsedSections.has(section.id);
-    
+
     return (
       <div
         key={section.id}
