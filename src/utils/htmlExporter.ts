@@ -1,7 +1,7 @@
-import { NovelEpisode } from '../types';
+import { NovelEpisode, Chapter, Section } from '../types';
 
 export function generateHTML(episode: NovelEpisode): string {
-  const { title, header, blocks, style } = episode;
+  const { title, header, style, chapters } = episode;
 
   const aspectRatioMap: Record<string, string> = {
     '21:9': '42.857%',
@@ -48,11 +48,8 @@ export function generateHTML(episode: NovelEpisode): string {
     </div>
   ` : '';
 
-  // Generate body with inline styles
-  const bodyHTML = blocks.map(block => {
-    const processedText = processDialogue(escapeHtml(block.text), style.highlightBg, style.highlightText);
-    return `<p style="margin-bottom: 1.5rem; margin-top: 0; line-height: ${style.lineHeight}; letter-spacing: ${style.letterSpacing}px; color: ${style.bodyText};">${processedText}</p>`;
-  }).join('\n');
+  // Generate chapters HTML
+  const chaptersHTML = chapters && chapters.length > 0 ? chapters.map((chapter, idx) => generateChapterHTML(chapter, idx, style)).join('\n') : '';
 
   // Generate complete HTML with all inline styles
   const containerHTML = `
@@ -61,14 +58,62 @@ export function generateHTML(episode: NovelEpisode): string {
     ${header.heroImageLayout === 'above' && header.heroImageUrl ? heroImageHTML : ''}
     ${header.heroImageLayout === 'background' && header.heroImageUrl ? heroImageHTML : headerHTML}
     ${header.heroImageLayout !== 'above' && header.heroImageLayout !== 'background' && !header.heroImageUrl ? headerHTML : ''}
-    <div style="font-size: ${style.fontSize}px; color: ${style.bodyText};">
-      ${bodyHTML}
+    <div style="margin-top: 2rem;">
+      ${chaptersHTML}
     </div>
     ${header.heroImageLayout === 'below' && header.heroImageUrl ? heroImageHTML : ''}
   </div>
 </div>`;
 
   return containerHTML.trim();
+}
+
+function generateChapterHTML(chapter: Chapter, index: number, style: any): string {
+  const chapterId = `chapter-${index}`;
+  
+  // Process main content
+  const mainContentHTML = chapter.content ? chapter.content.split(/\n\n+/).map(para => {
+    const processedText = processDialogue(escapeHtml(para), style.highlightBg, style.highlightText);
+    return `<p style="margin-bottom: 1.5rem; margin-top: 0; line-height: ${style.lineHeight}; letter-spacing: ${style.letterSpacing}px; color: ${style.bodyText};">${processedText}</p>`;
+  }).join('\n') : '';
+
+  // Process sections
+  const sectionsHTML = chapter.sections && chapter.sections.length > 0 ? 
+    `<div style="margin-top: 1rem;">${chapter.sections.map((section, sIdx) => generateSectionHTML(section, index, sIdx, style)).join('\n')}</div>` : '';
+
+  return `
+    <div style="margin-bottom: 2rem; background-color: ${style.chapterBg || style.cardBg}; border: 2px solid ${style.chapterBorder || '#e5e7eb'}; border-radius: 12px; overflow: hidden;">
+      <div onclick="toggleChapter('${chapterId}')" style="background-color: ${style.chapterTitleBg || '#f3f4f6'}; color: ${style.chapterTitleText || style.bodyText}; padding: 1rem 1.5rem; cursor: pointer; display: flex; align-items: center; gap: 0.75rem; font-weight: 700; font-size: 1.25rem; user-select: none;">
+        <span id="${chapterId}-icon" style="opacity: 0.6;">▼</span>
+        ${escapeHtml(chapter.title)}
+      </div>
+      <div id="${chapterId}-content" style="padding: 1.5rem; font-size: ${style.fontSize}px;">
+        ${mainContentHTML}
+        ${sectionsHTML}
+      </div>
+    </div>
+  `;
+}
+
+function generateSectionHTML(section: Section, chapterIdx: number, sectionIdx: number, style: any): string {
+  const sectionId = `section-${chapterIdx}-${sectionIdx}`;
+  
+  const sectionContentHTML = section.content ? section.content.split(/\n\n+/).map(para => {
+    const processedText = processDialogue(escapeHtml(para), style.highlightBg, style.highlightText);
+    return `<p style="margin-bottom: 1rem; margin-top: 0; line-height: ${style.lineHeight}; letter-spacing: ${style.letterSpacing}px; color: ${style.bodyText};">${processedText}</p>`;
+  }).join('\n') : '';
+
+  return `
+    <div style="margin-bottom: 1rem; border-left: 3px solid ${style.highlightBg}; padding-left: 1rem;">
+      <div onclick="toggleSection('${sectionId}')" style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; font-weight: 600; font-size: 1.1rem; color: ${style.bodyText}; user-select: none;">
+        <span id="${sectionId}-icon" style="opacity: 0.5; font-size: 0.875rem;">▼</span>
+        ${escapeHtml(section.subtitle)}
+      </div>
+      <div id="${sectionId}-content" style="font-size: ${style.fontSize}px;">
+        ${sectionContentHTML}
+      </div>
+    </div>
+  `;
 }
 
 function getTitleAlignment(position: string) {
@@ -89,7 +134,6 @@ function escapeHtml(text: string): string {
 }
 
 function processDialogue(text: string, highlightBg: string, highlightText: string): string {
-  // Replace quotes with highlighted spans
   return text
     .replace(/"([^"]+)"/g, `<span style="background: ${highlightBg}; color: ${highlightText}; padding: 2px 6px; border-radius: 4px;">"$1"</span>`)
     .replace(/“([^”]+)”/g, `<span style="background: ${highlightBg}; color: ${highlightText}; padding: 2px 6px; border-radius: 4px;">“$1”</span>`)
@@ -97,7 +141,37 @@ function processDialogue(text: string, highlightBg: string, highlightText: strin
 }
 
 export function copyHTMLToClipboard(html: string): Promise<void> {
-  return navigator.clipboard.writeText(html);
+  // Add toggle scripts
+  const fullHTML = `
+<script>
+function toggleChapter(id) {
+  const content = document.getElementById(id + '-content');
+  const icon = document.getElementById(id + '-icon');
+  if (content.style.display === 'none') {
+    content.style.display = 'block';
+    icon.textContent = '▼';
+  } else {
+    content.style.display = 'none';
+    icon.textContent = '▶';
+  }
+}
+
+function toggleSection(id) {
+  const content = document.getElementById(id + '-content');
+  const icon = document.getElementById(id + '-icon');
+  if (content.style.display === 'none') {
+    content.style.display = 'block';
+    icon.textContent = '▼';
+  } else {
+    content.style.display = 'none';
+    icon.textContent = '▶';
+  }
+}
+</script>
+${html}
+  `.trim();
+  
+  return navigator.clipboard.writeText(fullHTML);
 }
 
 export function downloadHTML(html: string, filename: string): void {
@@ -116,6 +190,31 @@ export function downloadHTML(html: string, filename: string): void {
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { margin: 0; padding: 0; }
   </style>
+  <script>
+  function toggleChapter(id) {
+    const content = document.getElementById(id + '-content');
+    const icon = document.getElementById(id + '-icon');
+    if (content.style.display === 'none') {
+      content.style.display = 'block';
+      icon.textContent = '▼';
+    } else {
+      content.style.display = 'none';
+      icon.textContent = '▶';
+    }
+  }
+
+  function toggleSection(id) {
+    const content = document.getElementById(id + '-content');
+    const icon = document.getElementById(id + '-icon');
+    if (content.style.display === 'none') {
+      content.style.display = 'block';
+      icon.textContent = '▼';
+    } else {
+      content.style.display = 'none';
+      icon.textContent = '▶';
+    }
+  }
+  </script>
 </head>
 <body>
 ${html}
