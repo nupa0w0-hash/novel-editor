@@ -1,12 +1,14 @@
-import React from 'react';
-import { NovelEpisode } from '../types';
+import React, { useState } from 'react';
+import { NovelEpisode, Chapter, Section } from '../types';
 
 interface NovelPreviewProps {
   episode: NovelEpisode;
 }
 
 export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
-  const { title, header, blocks, style } = episode;
+  const { title, header, style, chapters } = episode;
+  const [collapsedChapters, setCollapsedChapters] = useState<Set<string>>(new Set());
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
 
   const getTitleAlignment = (position: string) => {
     const map: Record<string, { vertical: string; horizontal: string }> = {
@@ -23,8 +25,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
     const parts: React.ReactNode[] = [];
     let lastIndex = 0;
 
-    // Match Korean quotes, English quotes
-    const regex = /(“[^”]+”|「[^」]+」|"[^"]+")/g;
+    const regex = /("[^"]+"|「[^」]+」|“[^”]+”)/g;
     let match;
 
     while ((match = regex.exec(text)) !== null) {
@@ -52,6 +53,30 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
     }
 
     return parts.length > 0 ? parts : text;
+  };
+
+  const toggleChapter = (id: string) => {
+    setCollapsedChapters(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const toggleSection = (id: string) => {
+    setCollapsedSections(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
   };
 
   const aspectRatioMap: Record<string, string> = {
@@ -159,6 +184,126 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
     );
   };
 
+  const renderChapter = (chapter: Chapter) => {
+    const isCollapsed = collapsedChapters.has(chapter.id);
+    
+    return (
+      <div
+        key={chapter.id}
+        style={{
+          marginBottom: '2rem',
+          backgroundColor: style.chapterBg || style.cardBg,
+          border: `2px solid ${style.chapterBorder || '#e5e7eb'}`,
+          borderRadius: '12px',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Chapter Title */}
+        <div
+          onClick={() => toggleChapter(chapter.id)}
+          style={{
+            backgroundColor: style.chapterTitleBg || '#f3f4f6',
+            color: style.chapterTitleText || style.bodyText,
+            padding: '1rem 1.5rem',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            fontWeight: 700,
+            fontSize: '1.25rem',
+            userSelect: 'none',
+          }}
+        >
+          <span style={{ opacity: 0.6 }}>{isCollapsed ? '▶' : '▼'}</span>
+          {chapter.title}
+        </div>
+
+        {/* Chapter Content */}
+        {!isCollapsed && (
+          <div style={{ padding: '1.5rem' }}>
+            {/* Main content */}
+            {chapter.content && (
+              <div
+                style={{
+                  fontSize: `${style.fontSize}px`,
+                  color: style.bodyText,
+                  lineHeight: style.lineHeight,
+                  letterSpacing: `${style.letterSpacing}px`,
+                  marginBottom: chapter.sections.length > 0 ? '1.5rem' : 0,
+                }}
+              >
+                {chapter.content.split(/\n\n+/).map((para, idx) => (
+                  <p key={idx} style={{ marginBottom: '1.5rem' }}>
+                    {processDialogue(para)}
+                  </p>
+                ))}
+              </div>
+            )}
+
+            {/* Sections */}
+            {chapter.sections.length > 0 && (
+              <div style={{ marginTop: '1rem' }}>
+                {chapter.sections.map(section => renderSection(section))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderSection = (section: Section) => {
+    const isCollapsed = collapsedSections.has(section.id);
+    
+    return (
+      <div
+        key={section.id}
+        style={{
+          marginBottom: '1rem',
+          borderLeft: `3px solid ${style.highlightBg}`,
+          paddingLeft: '1rem',
+        }}
+      >
+        {/* Section Subtitle */}
+        <div
+          onClick={() => toggleSection(section.id)}
+          style={{
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            marginBottom: isCollapsed ? 0 : '0.75rem',
+            fontWeight: 600,
+            fontSize: '1.1rem',
+            color: style.bodyText,
+            userSelect: 'none',
+          }}
+        >
+          <span style={{ opacity: 0.5, fontSize: '0.875rem' }}>{isCollapsed ? '▶' : '▼'}</span>
+          {section.subtitle}
+        </div>
+
+        {/* Section Content */}
+        {!isCollapsed && section.content && (
+          <div
+            style={{
+              fontSize: `${style.fontSize}px`,
+              color: style.bodyText,
+              lineHeight: style.lineHeight,
+              letterSpacing: `${style.letterSpacing}px`,
+            }}
+          >
+            {section.content.split(/\n\n+/).map((para, idx) => (
+              <p key={idx} style={{ marginBottom: '1rem' }}>
+                {processDialogue(para)}
+              </p>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div
       style={{
@@ -182,19 +327,9 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
         {renderHeader()}
         {header.heroImageLayout === 'background' && renderHeroImage()}
 
-        <div
-          style={{
-            fontSize: `${style.fontSize}px`,
-            color: style.bodyText,
-            lineHeight: style.lineHeight,
-            letterSpacing: `${style.letterSpacing}px`,
-          }}
-        >
-          {blocks.map((block, idx) => (
-            <p key={idx} style={{ marginBottom: '1.5rem' }}>
-              {processDialogue(block.text)}
-            </p>
-          ))}
+        {/* Render Chapters */}
+        <div style={{ marginTop: '2rem' }}>
+          {chapters && chapters.length > 0 && chapters.map(chapter => renderChapter(chapter))}
         </div>
 
         {header.heroImageLayout === 'below' && renderHeroImage()}
