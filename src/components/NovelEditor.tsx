@@ -916,7 +916,6 @@ export const NovelEditor = () => {
                 </div>
               </div>
 
-              {/* 이하 스타일 UI는 기존과 동일 */}
               <div className="h-px bg-gray-100 w-full"></div>
 
               <div>
@@ -968,7 +967,164 @@ export const NovelEditor = () => {
                 </div>
               </div>
 
-              {/* (나머지 스타일 섹션들은 원본 그대로 유지해야 하는데, 길이 때문에 생략 주석 처리) */}
+              <div className="h-px bg-gray-100 w-full"></div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-400 uppercase mb-3 tracking-wider">헤더 색상</label>
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1">제목</label>
+                    <div className="flex items-center gap-2">
+                      <input type="color" value={titleColor || '#000000'} onChange={e => setTitleColor(e.target.value)} className="w-8 h-8 rounded cursor-pointer" />
+                      <button onClick={() => setTitleColor('')} className="text-[10px] text-gray-400 underline">초기화</button>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1">부제목</label>
+                    <div className="flex items-center gap-2">
+                      <input type="color" value={subtitleColor || '#000000'} onChange={e => setSubtitleColor(e.target.value)} className="w-8 h-8 rounded cursor-pointer" />
+                      <button onClick={() => setSubtitleColor('')} className="text-[10px] text-gray-400 underline">초기화</button>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1">저자</label>
+                    <div className="flex items-center gap-2">
+                      <input type="color" value={authorColor || '#000000'} onChange={e => setAuthorColor(e.target.value)} className="w-8 h-8 rounded cursor-pointer" />
+                      <button onClick={() => setAuthorColor('')} className="text-[10px] text-gray-400 underline">초기화</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="h-px bg-gray-100 w-full"></div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-400 uppercase mb-3 tracking-wider">배경 색상</label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1">외부 배경</label>
+                    <div className="flex items-center gap-2">
+                      <input type="color" value={style.outerBg} onChange={e => setStyle({...style, outerBg: e.target.value})} className="w-8 h-8 rounded cursor-pointer" />
+                      <span className="text-xs font-mono text-gray-400">{style.outerBg}</span>
+                    </div>
+                    <label className="flex items-center gap-2 mt-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={style.transparentOuter}
+                        onChange={e => setStyle({...style, transparentOuter: e.target.checked})}
+                        className="rounded border-gray-300"
+                      />
+                      <span className="text-xs font-bold text-gray-500">투명</span>
+                    </label>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1">카드 배경</label>
+                    <div className="flex items-center gap-2">
+                      <input type="color" value={style.cardBg} onChange={e => setStyle({...style, cardBg: e.target.value})} className="w-8 h-8 rounded cursor-pointer" />
+                      <span className="text-xs font-mono text-gray-400">{style.cardBg}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1">본문 텍스트</label>
+                    <div className="flex items-center gap-2">
+                      <input type="color" value={style.bodyText} onChange={e => setStyle({...style, bodyText: e.target.value})} className="w-8 h-8 rounded cursor-pointer" />
+                      <span className="text-xs font-mono text-gray-400">{style.bodyText}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="h-px bg-gray-100 w-full"></div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-400 uppercase mb-3 tracking-wider">대화 하이라이트</label>
+                <div className="flex gap-4 p-4 rounded-lg border border-gray-100 bg-gray-50">
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1">배경</label>
+                    <input type="color" value={style.highlightBg} onChange={e => setStyle({...style, highlightBg: e.target.value})} className="w-8 h-8 rounded cursor-pointer" />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1">텍스트</label>
+                    <input type="color" value={style.highlightText} onChange={e => setStyle({...style, highlightText: e.target.value})} className="w-8 h-8 rounded cursor-pointer" />
+                  </div>
+                  <div className="flex-1 flex items-center justify-center">
+                    <div className="text-sm">
+                      미리보기 <span style={{ backgroundColor: style.highlightBg, color: style.highlightText, padding: '2px 4px', borderRadius: '4px' }}>&quot;대화&quot;</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="h-px bg-gray-100 w-full"></div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-400 uppercase mb-3 tracking-wider">챕터 박스 스타일</label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1">챕터 배경</label>
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="color" 
+                        value={style.chapterBg || style.cardBg} 
+                        onChange={e => setStyle({...style, chapterBg: e.target.value})} 
+                        className="w-8 h-8 rounded cursor-pointer" 
+                      />
+                      <span className="text-xs font-mono text-gray-400">{style.chapterBg || style.cardBg}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1">챕터 테두리</label>
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="color" 
+                        value={style.chapterBorder || '#e5e7eb'} 
+                        onChange={e => setStyle({...style, chapterBorder: e.target.value})} 
+                        className="w-8 h-8 rounded cursor-pointer" 
+                      />
+                      <span className="text-xs font-mono text-gray-400">{style.chapterBorder || '#e5e7eb'}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1">제목 배경</label>
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="color" 
+                        value={style.chapterTitleBg || '#f3f4f6'} 
+                        onChange={e => setStyle({...style, chapterTitleBg: e.target.value})} 
+                        className="w-8 h-8 rounded cursor-pointer" 
+                      />
+                      <span className="text-xs font-mono text-gray-400">{style.chapterTitleBg || '#f3f4f6'}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1">제목 텍스트</label>
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="color" 
+                        value={style.chapterTitleText || style.bodyText} 
+                        onChange={e => setStyle({...style, chapterTitleText: e.target.value})} 
+                        className="w-8 h-8 rounded cursor-pointer" 
+                      />
+                      <span className="text-xs font-mono text-gray-400">{style.chapterTitleText || style.bodyText}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mt-4 p-4 rounded-lg border-2" style={{
+                  backgroundColor: style.chapterBg || style.cardBg,
+                  borderColor: style.chapterBorder || '#e5e7eb'
+                }}>
+                  <div className="px-3 py-2 rounded-lg mb-3" style={{
+                    backgroundColor: style.chapterTitleBg || '#f3f4f6',
+                    color: style.chapterTitleText || style.bodyText
+                  }}>
+                    <span className="text-sm font-bold">챕터 제목 미리보기</span>
+                  </div>
+                  <div className="text-xs" style={{ color: style.bodyText }}>
+                    챕터 내용이 이렇게 표시됩니다.
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
