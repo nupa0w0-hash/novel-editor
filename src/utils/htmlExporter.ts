@@ -1,8 +1,13 @@
 import { NovelEpisode, Chapter, Section } from '../types';
 
 export type CollapseMode = 'all-expanded' | 'all-collapsed';
+export type ExportViewport = 'desktop' | 'mobile';
 
-export function generateHTML(episode: NovelEpisode, collapseMode: CollapseMode = 'all-expanded'): string {
+export function generateHTML(
+  episode: NovelEpisode,
+  collapseMode: CollapseMode = 'all-expanded',
+  viewport: ExportViewport = 'desktop'
+): string {
   const { title, header, style, chapters } = episode;
 
   const aspectRatioMap: Record<string, string> = {
@@ -15,6 +20,30 @@ export function generateHTML(episode: NovelEpisode, collapseMode: CollapseMode =
     original: 'auto',
   };
 
+  const layout = viewport === 'mobile'
+    ? {
+        maxWidth: '420px',
+        innerPadding: '1.5rem 1.25rem',
+        headerTitleSize: '2rem',
+        headerTitleSizeBg: '2.2rem',
+        headerSubtitleSize: '1rem',
+        headerSubtitleSizeBg: '1.05rem',
+        headerAuthorSize: '0.9rem',
+        headerAuthorSizeBg: '0.95rem',
+        heroPadding: '1.25rem',
+      }
+    : {
+        maxWidth: '1100px',
+        innerPadding: '3rem 4rem',
+        headerTitleSize: '2.5rem',
+        headerTitleSizeBg: '3rem',
+        headerSubtitleSize: '1.125rem',
+        headerSubtitleSizeBg: '1.25rem',
+        headerAuthorSize: '0.875rem',
+        headerAuthorSizeBg: '1rem',
+        heroPadding: '2rem',
+      };
+
   // Generate hero image HTML
   let heroImageHTML = '';
   if (header.heroImageUrl) {
@@ -24,11 +53,11 @@ export function generateHTML(episode: NovelEpisode, collapseMode: CollapseMode =
       const alignment = getTitleAlignment(header.titlePosition || 'center');
       heroImageHTML = `
         <div style="position: relative; width: 100%; padding-bottom: ${paddingBottom}; background-image: url('${header.heroImageUrl}'); background-size: cover; background-position: center; margin-bottom: 2rem;">
-          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: ${alignment.vertical}; justify-content: ${alignment.horizontal}; padding: 2rem;">
+          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: ${alignment.vertical}; justify-content: ${alignment.horizontal}; padding: ${layout.heroPadding};">
             <div style="text-align: center; color: ${header.titleColor || '#fff'}; text-shadow: 0 2px 8px rgba(0,0,0,0.5);">
-              <h1 style="font-size: 3rem; font-weight: 900; margin-bottom: 0.5rem; margin-top: 0;">${escapeHtml(title)}</h1>
-              ${header.subtitle ? `<p style="font-size: 1.25rem; color: ${header.subtitleColor || '#fff'}; margin-bottom: 0.5rem; margin-top: 0;">${escapeHtml(header.subtitle)}</p>` : ''}
-              ${header.author ? `<p style="font-size: 1rem; color: ${header.authorColor || '#fff'}; margin-top: 0; margin-bottom: 0;">${escapeHtml(header.author)}</p>` : ''}
+              <h1 style="font-size: ${layout.headerTitleSizeBg}; font-weight: 900; margin-bottom: 0.5rem; margin-top: 0;">${escapeHtml(title)}</h1>
+              ${header.subtitle ? `<p style="font-size: ${layout.headerSubtitleSizeBg}; color: ${header.subtitleColor || '#fff'}; margin-bottom: 0.5rem; margin-top: 0;">${escapeHtml(header.subtitle)}</p>` : ''}
+              ${header.author ? `<p style="font-size: ${layout.headerAuthorSizeBg}; color: ${header.authorColor || '#fff'}; margin-top: 0; margin-bottom: 0;">${escapeHtml(header.author)}</p>` : ''}
             </div>
           </div>
         </div>
@@ -44,9 +73,9 @@ export function generateHTML(episode: NovelEpisode, collapseMode: CollapseMode =
   const headerHTML = header.heroImageLayout !== 'background' || !header.heroImageUrl
     ? `
     <div style="text-align: center; margin-bottom: 3rem;">
-      <h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 0.5rem; margin-top: 0; color: ${header.titleColor || style.bodyText};">${escapeHtml(title)}</h1>
-      ${header.subtitle ? `<p style="font-size: 1.125rem; color: ${header.subtitleColor || style.bodyText}; opacity: 0.7; margin-bottom: 0.5rem; margin-top: 0;">${escapeHtml(header.subtitle)}</p>` : ''}
-      ${header.author ? `<p style="font-size: 0.875rem; color: ${header.authorColor || style.bodyText}; opacity: 0.6; font-weight: 700; margin-top: 0; margin-bottom: 0;">${escapeHtml(header.author)}</p>` : ''}
+      <h1 style="font-size: ${layout.headerTitleSize}; font-weight: 900; margin-bottom: 0.5rem; margin-top: 0; color: ${header.titleColor || style.bodyText};">${escapeHtml(title)}</h1>
+      ${header.subtitle ? `<p style="font-size: ${layout.headerSubtitleSize}; color: ${header.subtitleColor || style.bodyText}; opacity: 0.7; margin-bottom: 0.5rem; margin-top: 0;">${escapeHtml(header.subtitle)}</p>` : ''}
+      ${header.author ? `<p style="font-size: ${layout.headerAuthorSize}; color: ${header.authorColor || style.bodyText}; opacity: 0.6; font-weight: 700; margin-top: 0; margin-bottom: 0;">${escapeHtml(header.author)}</p>` : ''}
       ${header.tags && header.tags.length > 0 ? `<div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;">${header.tags
         .map(
           (tag) =>
@@ -66,11 +95,9 @@ export function generateHTML(episode: NovelEpisode, collapseMode: CollapseMode =
   // 그래서 토글은 JS 대신 <details>/<summary> 기반으로 생성합니다.
   // 또한 게시판에서 <style>이 제거될 수도 있으므로 핵심 레이아웃은 inline 스타일로 처리합니다.
 
-  const innerPadding = '2.5rem 2rem';
-
   const containerHTML = `
 <div style="font-family: ${style.fontFamily}; background: ${style.transparentOuter ? 'transparent' : style.outerBg}; padding: 0;">
-  <div style="width: 100%; max-width: 1000px; margin: 0 auto; background: ${style.cardBg}; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: ${innerPadding};">
+  <div style="width: 100%; max-width: ${layout.maxWidth}; margin: 0 auto; background: ${style.cardBg}; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: ${layout.innerPadding};">
     ${header.heroImageLayout === 'above' && header.heroImageUrl ? heroImageHTML : ''}
     ${header.heroImageLayout === 'background' && header.heroImageUrl ? heroImageHTML : headerHTML}
     ${header.heroImageLayout !== 'above' && header.heroImageLayout !== 'background' && !header.heroImageUrl ? headerHTML : ''}

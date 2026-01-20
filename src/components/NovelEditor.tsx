@@ -303,6 +303,7 @@ export const NovelEditor = () => {
   // Export options
   const [exportCollapsed, setExportCollapsed] = useState(false);
   const exportMode: CollapseMode = exportCollapsed ? 'all-collapsed' : 'all-expanded';
+  const [exportViewMode, setExportViewMode] = useState<ViewMode>('desktop');
 
   // Chapter system
   const [chapters, setChapters] = useState<Chapter[]>([
@@ -542,9 +543,9 @@ export const NovelEditor = () => {
   const handleCopyHTML = async () => {
     if (!previewEpisode) return;
     try {
-      const html = generateHTML(previewEpisode, exportMode);
+      const html = generateHTML(previewEpisode, exportMode, exportViewMode);
       await copyHTMLToClipboard(html);
-      alert(`HTML이 복사되었습니다! (${exportCollapsed ? '모두 접힘' : '모두 펼침'})`);
+      alert(`HTML이 복사되었습니다! (${exportCollapsed ? '모두 접힘' : '모두 펼침'} / ${exportViewMode === 'desktop' ? 'PC' : '모바일'})`);
     } catch (err) {
       console.error('Copy failed', err);
       alert('복사에 실패했습니다');
@@ -553,7 +554,7 @@ export const NovelEditor = () => {
 
   const handleDownloadHTML = () => {
     if (!previewEpisode) return;
-    const html = generateHTML(previewEpisode, exportMode);
+    const html = generateHTML(previewEpisode, exportMode, exportViewMode);
     downloadHTML(html, title || 'novel');
   };
 
@@ -598,6 +599,23 @@ export const NovelEditor = () => {
               />
               모두 접힘
             </label>
+
+            <div className="flex rounded overflow-hidden border border-gray-200">
+              <button
+                onClick={() => setExportViewMode('desktop')}
+                className={`text-[10px] font-bold px-2 py-1 ${exportViewMode === 'desktop' ? 'bg-black text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+                title="PC 폭으로 내보내기"
+              >
+                PC
+              </button>
+              <button
+                onClick={() => setExportViewMode('mobile')}
+                className={`text-[10px] font-bold px-2 py-1 ${exportViewMode === 'mobile' ? 'bg-black text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+                title="모바일 폭으로 내보내기"
+              >
+                모바일
+              </button>
+            </div>
 
             <button onClick={clearDraft} className="text-xs font-bold text-gray-400 hover:text-gray-600 px-3 py-2">
               초기화
@@ -885,7 +903,8 @@ export const NovelEditor = () => {
                       <div className="w-3 h-3 rounded-full border border-black/10" style={{ backgroundColor: preset.style.cardBg }}></div>
                       <span className="text-xs font-bold text-gray-600 group-hover:text-black">{preset.name}</span>
                     </button>
-                  ))}
+                  ))
+                  }
                   {customPresets.map((preset, idx) => (
                     <div key={idx} className="relative group">
                       <button
