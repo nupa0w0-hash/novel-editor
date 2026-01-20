@@ -55,8 +55,8 @@ export function generateHTML(episode: NovelEpisode, collapseMode: CollapseMode =
 
   // Generate complete HTML with all inline styles
   const containerHTML = `
-<div style="font-family: ${style.fontFamily}; background: ${style.transparentOuter ? 'transparent' : style.outerBg}; padding: 2rem 1rem;">
-  <div style="max-width: 600px; margin: 0 auto; background: ${style.cardBg}; padding: 3rem 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+<div style="font-family: ${style.fontFamily}; background: ${style.transparentOuter ? 'transparent' : style.outerBg}; padding: 2rem;">
+  <div style="max-width: 800px; margin: 0 auto; background: ${style.cardBg}; padding: 3rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
     ${header.heroImageLayout === 'above' && header.heroImageUrl ? heroImageHTML : ''}
     ${header.heroImageLayout === 'background' && header.heroImageUrl ? heroImageHTML : headerHTML}
     ${header.heroImageLayout !== 'above' && header.heroImageLayout !== 'background' && !header.heroImageUrl ? headerHTML : ''}
@@ -88,11 +88,11 @@ function generateChapterHTML(chapter: Chapter, index: number, style: any, collap
 
   return `
     <div style="margin-bottom: 0.5rem; background-color: ${style.chapterBg || style.cardBg}; border: 1px solid ${style.chapterBorder || '#e5e7eb'}; border-radius: 4px; overflow: hidden; font-family: ${style.fontFamily};">
-      <div onclick="toggleChapter('${chapterId}')" style="background-color: ${style.chapterTitleBg || '#f3f4f6'}; color: ${style.chapterTitleText || style.bodyText}; padding: 0.35rem 0.5rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; font-weight: 600; font-size: 0.85rem; font-family: ${style.fontFamily}; user-select: none;">
+      <div onclick="toggleChapter('${chapterId}')" style="background-color: ${style.chapterTitleBg || '#f3f4f6'}; color: ${style.chapterTitleText || style.bodyText}; padding: 0.4rem 0.6rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; font-weight: 600; font-size: 0.85rem; font-family: ${style.fontFamily}; user-select: none;">
         <span id="${chapterId}-icon" style="opacity: 0.4; font-size: 0.65rem;">${initialIcon}</span>
         ${escapeHtml(chapter.title)}
       </div>
-      <div id="${chapterId}-content" style="padding: 0.5rem; font-size: ${style.fontSize}px; font-family: ${style.fontFamily}; display: ${displayStyle};">
+      <div id="${chapterId}-content" style="padding: 0.6rem; font-size: ${style.fontSize}px; font-family: ${style.fontFamily}; display: ${displayStyle};">
         ${mainContentHTML}
         ${sectionsHTML}
       </div>
