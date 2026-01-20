@@ -25,7 +25,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
     const parts: React.ReactNode[] = [];
     let lastIndex = 0;
 
-    const regex = /("[^"]+"|「[^」]+」|“[^”]+”)/g;
+    const regex = /("[^"]+"|「[^」]+」|"[^"]+")/g;
     let match;
 
     while ((match = regex.exec(text)) !== null) {
@@ -196,6 +196,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
           border: `1px solid ${style.chapterBorder || '#e5e7eb'}`,
           borderRadius: '4px',
           overflow: 'hidden',
+          fontFamily: style.fontFamily,
         }}
       >
         {/* Chapter Title */}
@@ -237,6 +238,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
                   color: style.bodyText,
                   lineHeight: style.lineHeight,
                   letterSpacing: `${style.letterSpacing}px`,
+                  fontFamily: style.fontFamily,
                   marginBottom: chapter.sections.length > 0 ? '0.5rem' : 0,
                 }}
               >
@@ -270,6 +272,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
           marginBottom: '0.3rem',
           borderLeft: `2px solid ${style.highlightBg}`,
           paddingLeft: '0.5rem',
+          fontFamily: style.fontFamily,
         }}
       >
         {/* Section Subtitle */}
@@ -325,7 +328,7 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode }) => {
     >
       <div
         style={{
-          maxWidth: '800px',
+          maxWidth: '600px',
           margin: '0 auto',
           background: style.cardBg,
           padding: '3rem 2rem',
