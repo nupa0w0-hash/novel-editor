@@ -34,3 +34,16 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+/* Scoped dark mode scrollbar (applies only when an ancestor has .dark) */
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+  background: #0b1220;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
