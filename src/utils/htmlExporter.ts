@@ -205,8 +205,6 @@ function escapeHtml(text: string): string {
 }
 
 function processDialogue(text: string, style: { highlightBg: string; highlightText: string; thoughtHighlightBg?: string; thoughtHighlightText?: string }): string {
-  // Dialogue: "", “”, 「」, ‹›, «»
-  // Thought: '', ‘’, ‚‘
   const dialogueBg = style.highlightBg;
   const dialogueText = style.highlightText;
   const thoughtBg = style.thoughtHighlightBg ?? dialogueBg;
@@ -216,14 +214,18 @@ function processDialogue(text: string, style: { highlightBg: string; highlightTe
     `<span style="background: ${bg}; color: ${fg}; padding: 2px 6px; border-radius: 4px;">${content}</span>`;
 
   return text
+    // Thought (double single quotes) should come before single-quote matching.
+    .replace(/''([^']+)''/g, (_m, inner) => wrap(`''${inner}''`, thoughtBg, thoughtText))
+    // Dialogue
     .replace(/"([^"]+)"/g, (_m, inner) => wrap(`&quot;${inner}&quot;`, dialogueBg, dialogueText))
     .replace(/“([^”]+)”/g, (_m, inner) => wrap(`“${inner}”`, dialogueBg, dialogueText))
+    .replace(/「([^」]+)」/g, (_m, inner) => wrap(`「${inner}」`, dialogueBg, dialogueText))
+    .replace(/‹([^›]+)›/g, (_m, inner) => wrap(`‹${inner}›`, dialogueBg, dialogueText))
+    .replace(/«([^»]+)»/g, (_m, inner) => wrap(`«${inner}»`, dialogueBg, dialogueText))
+    // Thought
     .replace(/'([^']+)'/g, (_m, inner) => wrap(`'${inner}'`, thoughtBg, thoughtText))
     .replace(/‘([^’]+)’/g, (_m, inner) => wrap(`‘${inner}’`, thoughtBg, thoughtText))
-    .replace(/「([^」]+)」/g, (_m, inner) => wrap(`「${inner}」`, dialogueBg, dialogueText))
-    .replace(/‚([^’]+)‘/g, (_m, inner) => wrap(`‚${inner}‘`, thoughtBg, thoughtText))
-    .replace(/‹([^›]+)›/g, (_m, inner) => wrap(`‹${inner}›`, dialogueBg, dialogueText))
-    .replace(/«([^»]+)»/g, (_m, inner) => wrap(`«${inner}»`, dialogueBg, dialogueText));
+    .replace(/‚([^’]+)‘/g, (_m, inner) => wrap(`‚${inner}‘`, thoughtBg, thoughtText));
 }
 
 export function copyHTMLToClipboard(html: string): Promise<void> {

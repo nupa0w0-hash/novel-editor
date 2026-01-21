@@ -40,8 +40,8 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode, viewMode = 
     let lastIndex = 0;
 
     // Dialogue: "", “”, 「」, ‹›, «»
-    // Thought: '', ‘’, ‚‘
-    const regex = /("[^"]+"|“[^”]+”|「[^」]+」|‹[^›]+›|«[^»]+»)|('[^']+'|‘[^’]+’|‚[^’]+‘)/g;
+    // Thought: ''...'', '...', ‘…’, ‚…‘
+    const regex = /("[^"]+"|“[^”]+”|「[^」]+」|‹[^›]+›|«[^»]+»)|(\'\'[^\']+\'\'|'[^']+'|‘[^’]+’|‚[^’]+‘)/g;
     let match;
 
     const thoughtBg = style.thoughtHighlightBg ?? style.highlightBg;

@@ -21,6 +21,8 @@ const DEFAULT_PRESETS: StylePreset[] = [
       bodyText: '#1f2937',
       highlightBg: '#e0e7ff',
       highlightText: '#3730a3',
+      thoughtHighlightBg: '#fef3c7',
+      thoughtHighlightText: '#92400e',
       fontSize: 14.2,
       lineHeight: 1.7,
       letterSpacing: -0.5,
@@ -40,6 +42,8 @@ const DEFAULT_PRESETS: StylePreset[] = [
       bodyText: '#e2e8f0',
       highlightBg: '#334155',
       highlightText: '#38bdf8',
+      thoughtHighlightBg: '#312e81',
+      thoughtHighlightText: '#c7d2fe',
       fontSize: 14.2,
       lineHeight: 1.8,
       letterSpacing: -0.3,
@@ -59,6 +63,8 @@ const DEFAULT_PRESETS: StylePreset[] = [
       bodyText: '#4c1d95',
       highlightBg: '#f3e8ff',
       highlightText: '#7c3aed',
+      thoughtHighlightBg: '#fef3c7',
+      thoughtHighlightText: '#a16207',
       fontSize: 14.5,
       lineHeight: 1.8,
       letterSpacing: -0.4,
@@ -78,6 +84,8 @@ const DEFAULT_PRESETS: StylePreset[] = [
       bodyText: '#164e63',
       highlightBg: '#cffafe',
       highlightText: '#0891b2',
+      thoughtHighlightBg: '#e0f2fe',
+      thoughtHighlightText: '#0369a1',
       fontSize: 14.2,
       lineHeight: 1.75,
       letterSpacing: -0.3,
@@ -97,6 +105,8 @@ const DEFAULT_PRESETS: StylePreset[] = [
       bodyText: '#78350f',
       highlightBg: '#fed7aa',
       highlightText: '#92400e',
+      thoughtHighlightBg: '#e0e7ff',
+      thoughtHighlightText: '#3730a3',
       fontSize: 14.5,
       lineHeight: 1.8,
       letterSpacing: -0.5,
@@ -116,6 +126,8 @@ const DEFAULT_PRESETS: StylePreset[] = [
       bodyText: '#14532d',
       highlightBg: '#d1fae5',
       highlightText: '#047857',
+      thoughtHighlightBg: '#fce7f3',
+      thoughtHighlightText: '#be185d',
       fontSize: 14.2,
       lineHeight: 1.8,
       letterSpacing: -0.4,
@@ -135,6 +147,8 @@ const DEFAULT_PRESETS: StylePreset[] = [
       bodyText: '#7c2d12',
       highlightBg: '#fed7aa',
       highlightText: '#ea580c',
+      thoughtHighlightBg: '#dbeafe',
+      thoughtHighlightText: '#1d4ed8',
       fontSize: 14.2,
       lineHeight: 1.75,
       letterSpacing: -0.3,
@@ -154,6 +168,8 @@ const DEFAULT_PRESETS: StylePreset[] = [
       bodyText: '#831843',
       highlightBg: '#fce7f3',
       highlightText: '#be185d',
+      thoughtHighlightBg: '#d1fae5',
+      thoughtHighlightText: '#047857',
       fontSize: 14.5,
       lineHeight: 1.8,
       letterSpacing: -0.5,
@@ -173,6 +189,8 @@ const DEFAULT_PRESETS: StylePreset[] = [
       bodyText: '#e0e7ff',
       highlightBg: '#4338ca',
       highlightText: '#a5b4fc',
+      thoughtHighlightBg: '#374151',
+      thoughtHighlightText: '#fbbf24',
       fontSize: 14.2,
       lineHeight: 1.75,
       letterSpacing: -0.2,
@@ -192,6 +210,8 @@ const DEFAULT_PRESETS: StylePreset[] = [
       bodyText: '#134e4a',
       highlightBg: '#ccfbf1',
       highlightText: '#0f766e',
+      thoughtHighlightBg: '#dbeafe',
+      thoughtHighlightText: '#1d4ed8',
       fontSize: 14.2,
       lineHeight: 1.8,
       letterSpacing: -0.4,
@@ -211,6 +231,8 @@ const DEFAULT_PRESETS: StylePreset[] = [
       bodyText: '#1e293b',
       highlightBg: '#e2e8f0',
       highlightText: '#475569',
+      thoughtHighlightBg: '#fce7f3',
+      thoughtHighlightText: '#be185d',
       fontSize: 14.5,
       lineHeight: 1.8,
       letterSpacing: -0.5,
@@ -230,6 +252,8 @@ const DEFAULT_PRESETS: StylePreset[] = [
       bodyText: '#713f12',
       highlightBg: '#fef3c7',
       highlightText: '#a16207',
+      thoughtHighlightBg: '#dbeafe',
+      thoughtHighlightText: '#1d4ed8',
       fontSize: 14.2,
       lineHeight: 1.75,
       letterSpacing: -0.3,
@@ -249,6 +273,8 @@ const DEFAULT_PRESETS: StylePreset[] = [
       bodyText: '#1e3a8a',
       highlightBg: '#dbeafe',
       highlightText: '#1d4ed8',
+      thoughtHighlightBg: '#fef3c7',
+      thoughtHighlightText: '#a16207',
       fontSize: 14.5,
       lineHeight: 1.8,
       letterSpacing: -0.5,
@@ -268,6 +294,8 @@ const DEFAULT_PRESETS: StylePreset[] = [
       bodyText: '#e5e7eb',
       highlightBg: '#374151',
       highlightText: '#fbbf24',
+      thoughtHighlightBg: '#312e81',
+      thoughtHighlightText: '#c7d2fe',
       fontSize: 14.2,
       lineHeight: 1.7,
       letterSpacing: -0.5,
@@ -581,6 +609,9 @@ export const NovelEditor = () => {
       localStorage.removeItem('novel_draft');
     }
   };
+
+  const thoughtBg = style.thoughtHighlightBg ?? style.highlightBg;
+  const thoughtText = style.thoughtHighlightText ?? style.highlightText;
 
   return (
     <div className="flex flex-col md:flex-row w-screen min-h-screen md:h-screen bg-gray-100 overflow-x-hidden md:overflow-hidden">
@@ -1120,6 +1151,36 @@ export const NovelEditor = () => {
                       <div className="text-sm text-gray-900 dark:text-gray-100">
                         미리보기 <span style={{ backgroundColor: style.highlightBg, color: style.highlightText, padding: '2px 4px', borderRadius: '4px' }}>&quot;대화&quot;</span>
                       </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="h-px bg-gray-100 dark:bg-gray-800 w-full"></div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 uppercase mb-3 tracking-wider dark:text-gray-400">생각 하이라이트</label>
+                  <div className="flex gap-4 p-4 rounded-lg border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
+                    <div>
+                      <label className="block text-[10px] font-bold text-gray-500 dark:text-gray-300 mb-1">배경</label>
+                      <input type="color" value={thoughtBg} onChange={e => setStyle({...style, thoughtHighlightBg: e.target.value})} className="w-8 h-8 rounded cursor-pointer" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-gray-500 dark:text-gray-300 mb-1">텍스트</label>
+                      <input type="color" value={thoughtText} onChange={e => setStyle({...style, thoughtHighlightText: e.target.value})} className="w-8 h-8 rounded cursor-pointer" />
+                    </div>
+                    <div className="flex-1 flex items-center justify-center">
+                      <div className="text-sm text-gray-900 dark:text-gray-100">
+                        미리보기 <span style={{ backgroundColor: thoughtBg, color: thoughtText, padding: '2px 4px', borderRadius: '4px' }}>'생각'</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      <button
+                        onClick={() => setStyle({ ...style, thoughtHighlightBg: undefined, thoughtHighlightText: undefined })}
+                        className="text-[10px] text-gray-400 underline"
+                        title="생각 하이라이트를 대화 하이라이트로 되돌립니다"
+                      >
+                        초기화
+                      </button>
                     </div>
                   </div>
                 </div>
