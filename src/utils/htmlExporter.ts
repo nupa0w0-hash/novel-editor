@@ -21,13 +21,15 @@ export function generateHTML(
   };
 
   // Log Atelier-like defaults:
-  // - Outer wrapper takes full width (no extra padding)
-  // - Card is centered with a readable max-width
-  // - Mobile/desktop differ (desktop: narrower card + slightly roomier padding)
+  // - Outer wrapper takes full width
+  // - Card is centered with readable max-width
+  // - Mobile/desktop differ (desktop: narrower card)
   const commonLayout = {
     outerPadding: '0',
     cardRadius: '14px',
     cardShadow: '0 2px 8px rgba(0,0,0,0.08)',
+    // Guarantee a small, consistent side margin even when outer padding is 0.
+    cardWidth: 'calc(100% - 24px)',
 
     headerTitleSize: '1.75rem',
     headerTitleSizeBg: '2rem',
@@ -40,15 +42,14 @@ export function generateHTML(
 
   const mobileLayout = {
     ...commonLayout,
-    // Mobile is viewport-limited anyway; keep card reasonable but let padding breathe.
     cardMaxWidth: '750px',
     innerPadding: 'clamp(20px, 4.8vw, 32px) clamp(14px, 4.8vw, 22px)',
   };
 
   const desktopLayout = {
     ...commonLayout,
-    // Desktop: slightly narrower than before to improve line length readability.
-    cardMaxWidth: '680px',
+    // More visible difference vs mobile + better line length on wide screens.
+    cardMaxWidth: '640px',
     innerPadding: 'clamp(28px, 2.2vw, 40px) clamp(22px, 2.2vw, 34px)',
   };
 
@@ -115,7 +116,7 @@ export function generateHTML(
 
   const containerHTML = `
 <div style="box-sizing: border-box; width: 100%; max-width: 100%; font-family: ${style.fontFamily}; background-color: ${style.transparentOuter ? 'transparent' : style.outerBg}; padding: ${layout.outerPadding};">
-  <div style="box-sizing: border-box; width: 100%; max-width: ${layout.cardMaxWidth}; margin: 0 auto; background-color: ${style.cardBg}; border-radius: ${layout.cardRadius}; box-shadow: ${layout.cardShadow}; padding: ${layout.innerPadding}; overflow-wrap: break-word; word-wrap: break-word;">
+  <div style="box-sizing: border-box; width: ${layout.cardWidth}; max-width: ${layout.cardMaxWidth}; margin: 0 auto; background-color: ${style.cardBg}; border-radius: ${layout.cardRadius}; box-shadow: ${layout.cardShadow}; padding: ${layout.innerPadding}; overflow-wrap: break-word; word-wrap: break-word;">
     ${header.heroImageLayout === 'above' && header.heroImageUrl ? heroImageHTML : ''}
     ${header.heroImageLayout === 'background' && header.heroImageUrl ? heroImageHTML : headerHTML}
     ${header.heroImageLayout !== 'above' && header.heroImageLayout !== 'background' && !header.heroImageUrl ? headerHTML : ''}
