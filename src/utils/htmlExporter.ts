@@ -20,31 +20,31 @@ export function generateHTML(
     original: 'auto',
   };
 
-  // For bulletin board paste: use minimal outer padding and safe inner padding
-  // to prevent overflow on mobile screens. Box-sizing: border-box ensures padding
-  // is included in width calculations.
+  // For bulletin board paste: aggressive mobile-first approach
+  // - No fixed max-width that could cause overflow
+  // - Minimal padding to prevent horizontal scroll
+  // - All containers use box-sizing: border-box
   const baseLayout = {
-    maxWidth: '800px',
-    outerPadding: '0.5rem',  // Reduced from 2rem to prevent mobile overflow
-    headerTitleSize: '2.5rem',
-    headerTitleSizeBg: '3rem',
-    headerSubtitleSize: '1.125rem',
-    headerSubtitleSizeBg: '1.25rem',
-    headerAuthorSize: '0.875rem',
-    headerAuthorSizeBg: '1rem',
-    heroPadding: '1.5rem',  // Reduced from 2rem
+    outerPadding: '0.25rem',  // Minimal to prevent edge overflow
+    headerTitleSize: '1.75rem',
+    headerTitleSizeBg: '2rem',
+    headerSubtitleSize: '1rem',
+    headerSubtitleSizeBg: '1.125rem',
+    headerAuthorSize: '0.8rem',
+    headerAuthorSizeBg: '0.9rem',
+    heroPadding: '1rem',
   };
 
-  // Use fixed padding in rem/px for bulletin boards (% can cause issues)
+  // Mobile uses even smaller padding, desktop slightly more comfortable
   const layout =
     viewport === 'mobile'
       ? {
           ...baseLayout,
-          innerPadding: '2rem 1rem',  // Reduced: mobile needs minimal horizontal padding
+          innerPadding: '1.5rem 0.75rem',  // Minimal horizontal padding
         }
       : {
           ...baseLayout,
-          innerPadding: '2.5rem 1.5rem',  // Reduced from '3rem 15%'
+          innerPadding: '2rem 1.25rem',
         };
 
   // Apply titlePosition also when there is no hero image.
@@ -66,7 +66,7 @@ export function generateHTML(
         alignment.horizontal === 'flex-start' ? 'left' : alignment.horizontal === 'flex-end' ? 'right' : 'center';
 
       heroImageHTML = `
-        <div style="position: relative; width: 100%; padding-bottom: ${paddingBottom}; background-image: url('${header.heroImageUrl}'); background-size: cover; background-position: center; margin-bottom: 2rem;">
+        <div style="position: relative; width: 100%; padding-bottom: ${paddingBottom}; background-image: url('${header.heroImageUrl}'); background-size: cover; background-position: center; margin-bottom: 1.5rem;">
           <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: ${alignment.vertical}; justify-content: ${alignment.horizontal}; padding: ${layout.heroPadding};">
             <div style="text-align: ${textAlign}; color: ${header.titleColor || '#fff'}; text-shadow: 0 2px 8px rgba(0,0,0,0.5);">
               <h1 style="font-size: ${layout.headerTitleSizeBg}; font-weight: 900; margin-bottom: 0.5rem; margin-top: 0;">${escapeHtml(title)}</h1>
@@ -77,9 +77,9 @@ export function generateHTML(
         </div>
       `;
     } else if (header.heroImageLayout === 'above') {
-      heroImageHTML = `<div style="width: 100%; padding-bottom: ${paddingBottom}; background-image: url('${header.heroImageUrl}'); background-size: cover; background-position: center; margin-bottom: 2rem;"></div>`;
+      heroImageHTML = `<div style="width: 100%; padding-bottom: ${paddingBottom}; background-image: url('${header.heroImageUrl}'); background-size: cover; background-position: center; margin-bottom: 1.5rem;"></div>`;
     } else if (header.heroImageLayout === 'below') {
-      heroImageHTML = `<div style="width: 100%; padding-bottom: ${paddingBottom}; background-image: url('${header.heroImageUrl}'); background-size: cover; background-position: center; margin-top: 2rem;"></div>`;
+      heroImageHTML = `<div style="width: 100%; padding-bottom: ${paddingBottom}; background-image: url('${header.heroImageUrl}'); background-size: cover; background-position: center; margin-top: 1.5rem;"></div>`;
     }
   }
 
@@ -87,7 +87,7 @@ export function generateHTML(
   const headerHTML =
     header.heroImageLayout !== 'background' || !header.heroImageUrl
       ? `
-    <div style="text-align: ${headerTextAlign}; margin-bottom: 3rem;">
+    <div style="text-align: ${headerTextAlign}; margin-bottom: 2rem;">
       <h1 style="font-size: ${layout.headerTitleSize}; font-weight: 900; margin-bottom: 0.5rem; margin-top: 0; color: ${header.titleColor || style.bodyText};">${escapeHtml(title)}</h1>
       ${header.subtitle ? `<p style="font-size: ${layout.headerSubtitleSize}; color: ${header.subtitleColor || style.bodyText}; opacity: 0.7; margin-bottom: 0.5rem; margin-top: 0;">${escapeHtml(header.subtitle)}</p>` : ''}
       ${header.author ? `<p style="font-size: ${layout.headerAuthorSize}; color: ${header.authorColor || style.bodyText}; opacity: 0.6; font-weight: 700; margin-top: 0; margin-bottom: 0;">${escapeHtml(header.author)}</p>` : ''}
@@ -111,14 +111,15 @@ export function generateHTML(
       ? chapters.map((chapter, idx) => generateChapterHTML(chapter, idx, style, collapseMode)).join('\n')
       : '';
 
-  // Add box-sizing: border-box and max-width: 100% to all containers to prevent overflow
+  // Critical: use width: 100% and max-width: 100% on ALL containers
+  // Remove fixed max-width (like 800px) to prevent overflow on narrow bulletin board columns
   const containerHTML = `
-<div style="box-sizing: border-box; max-width: 100%; font-family: ${style.fontFamily}; background: ${style.transparentOuter ? 'transparent' : style.outerBg}; padding: ${layout.outerPadding};">
-  <div style="box-sizing: border-box; width: 100%; max-width: ${layout.maxWidth}; margin: 0 auto; background: ${style.cardBg}; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: ${layout.innerPadding};">
+<div style="box-sizing: border-box; width: 100%; max-width: 100%; font-family: ${style.fontFamily}; background: ${style.transparentOuter ? 'transparent' : style.outerBg}; padding: ${layout.outerPadding};">
+  <div style="box-sizing: border-box; width: 100%; max-width: 100%; margin: 0 auto; background: ${style.cardBg}; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: ${layout.innerPadding}; overflow-wrap: break-word; word-wrap: break-word;">
     ${header.heroImageLayout === 'above' && header.heroImageUrl ? heroImageHTML : ''}
     ${header.heroImageLayout === 'background' && header.heroImageUrl ? heroImageHTML : headerHTML}
     ${header.heroImageLayout !== 'above' && header.heroImageLayout !== 'background' && !header.heroImageUrl ? headerHTML : ''}
-    <div style="margin-top: 2rem;">
+    <div style="margin-top: 1.5rem;">
       ${chaptersHTML}
     </div>
     ${header.heroImageLayout === 'below' && header.heroImageUrl ? heroImageHTML : ''}
@@ -210,8 +211,8 @@ function processDialogue(text: string, highlightBg: string, highlightText: strin
       `<span style="background: ${highlightBg}; color: ${highlightText}; padding: 2px 6px; border-radius: 4px;">"$1"</span>`
     )
     .replace(
-      /“([^”]+)”/g,
-      `<span style="background: ${highlightBg}; color: ${highlightText}; padding: 2px 6px; border-radius: 4px;">“$1”</span>`
+      /"([^"]+)"/g,
+      `<span style="background: ${highlightBg}; color: ${highlightText}; padding: 2px 6px; border-radius: 4px;">"$1"</span>`
     )
     .replace(
       /「([^」]+)」/g,
