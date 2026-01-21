@@ -124,7 +124,7 @@ function generateChapterHTML(chapter: Chapter, index: number, style: any, collap
     ? chapter.content
         .split(/\n\n+/)
         .map((para) => {
-          const processedText = processDialogue(escapeHtml(para), style);
+          const processedText = processDialogue(para, style);
           return `<p style="margin-bottom: 0.7rem; margin-top: 0; line-height: ${style.lineHeight}; letter-spacing: ${style.letterSpacing}px; color: ${style.bodyText};">${processedText}</p>`;
         })
         .join('\n')
@@ -157,7 +157,7 @@ function generateSectionHTML(section: Section, _chapterIdx: number, _sectionIdx:
     ? section.content
         .split(/\n\n+/)
         .map((para) => {
-          const processedText = processDialogue(escapeHtml(para), style);
+          const processedText = processDialogue(para, style);
           return `<p style="margin-bottom: 0.5rem; margin-top: 0; line-height: ${style.lineHeight}; letter-spacing: ${style.letterSpacing}px; color: ${style.bodyText};">${processedText}</p>`;
         })
         .join('\n')
@@ -201,32 +201,32 @@ function processDialogue(text: string, style: { highlightBg: string; highlightTe
   const wrap = (content: string, bg: string, fg: string) =>
     `<span style="background-color: ${bg}; color: ${fg}; padding: 2px 6px; border-radius: 4px;">${content}</span>`;
 
-  // Match NovelPreview.tsx regex exactly with actual Unicode characters
-  // Dialogue: "", "", 「」, ‹›, «»
-  // Thought: ''...'', '...', '...', ‚...'
-  const regex = /("[^"]+"|"[^"]+"|「[^」]+」|‹[^›]+›|«[^»]+»)|(''[^']+''|'[^']+'|'[^']+'|‚[^']+')/g;
-  
+  // Match NovelPreview.tsx regex exactly
+  // Dialogue: "", “”, 「」, ‹›, «»
+  // Thought: ''...'', '...', ‘…’, ‚…‘
+  const regex = /("[^"]+"|“[^”]+”|「[^」]+」|‹[^›]+›|«[^»]+»)|(\'\'[^\']+\'\'|'[^']+'|‘[^’]+’|‚[^’]+‘)/g;
+
   let result = '';
   let lastIndex = 0;
   let match;
 
   while ((match = regex.exec(text)) !== null) {
     if (match.index > lastIndex) {
-      result += text.substring(lastIndex, match.index);
+      result += escapeHtml(text.substring(lastIndex, match.index));
     }
 
     const token = match[0];
     const isDialogue = !!match[1];
 
-    result += wrap(token, isDialogue ? dialogueBg : thoughtBg, isDialogue ? dialogueText : thoughtText);
+    result += wrap(escapeHtml(token), isDialogue ? dialogueBg : thoughtBg, isDialogue ? dialogueText : thoughtText);
     lastIndex = match.index + token.length;
   }
 
   if (lastIndex < text.length) {
-    result += text.substring(lastIndex);
+    result += escapeHtml(text.substring(lastIndex));
   }
 
-  return result || text;
+  return result || escapeHtml(text);
 }
 
 export function copyHTMLToClipboard(html: string): Promise<void> {
