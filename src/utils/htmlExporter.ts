@@ -87,7 +87,7 @@ export function generateHTML(
           ? `<div style="display: flex; gap: 0.5rem; justify-content: ${headerTagsJustify}; margin-top: 1rem; flex-wrap: wrap;">${header.tags
               .map(
                 (tag) =>
-                  `<span style="background: ${style.highlightBg}; color: ${style.highlightText}; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 700;">${escapeHtml(tag)}</span>`
+                  `<span style="background-color: ${style.highlightBg}; color: ${style.highlightText}; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 700;">${escapeHtml(tag)}</span>`
               )
               .join('')}</div>`
           : ''
@@ -102,8 +102,8 @@ export function generateHTML(
       : '';
 
   const containerHTML = `
-<div style="box-sizing: border-box; width: 100%; max-width: 100%; font-family: ${style.fontFamily}; background: ${style.transparentOuter ? 'transparent' : style.outerBg}; padding: ${layout.outerPadding};">
-  <div style="box-sizing: border-box; width: 100%; max-width: 800px; margin: 0 auto; background: ${style.cardBg}; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: ${layout.innerPadding}; overflow-wrap: break-word; word-wrap: break-word;">
+<div style="box-sizing: border-box; width: 100%; max-width: 100%; font-family: ${style.fontFamily}; background-color: ${style.transparentOuter ? 'transparent' : style.outerBg}; padding: ${layout.outerPadding};">
+  <div style="box-sizing: border-box; width: 100%; max-width: 800px; margin: 0 auto; background-color: ${style.cardBg}; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: ${layout.innerPadding}; overflow-wrap: break-word; word-wrap: break-word;">
     ${header.heroImageLayout === 'above' && header.heroImageUrl ? heroImageHTML : ''}
     ${header.heroImageLayout === 'background' && header.heroImageUrl ? heroImageHTML : headerHTML}
     ${header.heroImageLayout !== 'above' && header.heroImageLayout !== 'background' && !header.heroImageUrl ? headerHTML : ''}
@@ -199,9 +199,11 @@ function processDialogue(text: string, style: { highlightBg: string; highlightTe
   const thoughtText = style.thoughtHighlightText ?? dialogueText;
 
   const wrap = (content: string, bg: string, fg: string) =>
-    `<span style="background: ${bg}; color: ${fg}; padding: 2px 6px; border-radius: 4px;">${content}</span>`;
+    `<span style="background-color: ${bg}; color: ${fg}; padding: 2px 6px; border-radius: 4px;">${content}</span>`;
 
-  // Match NovelPreview.tsx regex exactly: dialogue first group, thought second group
+  // Match NovelPreview.tsx regex exactly with actual Unicode characters
+  // Dialogue: "", "", 「」, ‹›, «»
+  // Thought: ''...'', '...', '...', ‚...'
   const regex = /("[^"]+"|"[^"]+"|「[^」]+」|‹[^›]+›|«[^»]+»)|(''[^']+''|'[^']+'|'[^']+'|‚[^']+')/g;
   
   let result = '';
