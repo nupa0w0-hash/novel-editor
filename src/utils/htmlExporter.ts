@@ -20,33 +20,31 @@ export function generateHTML(
     original: 'auto',
   };
 
-  // Export HTML should match the preview layout as closely as possible.
-  // On boards like ArcaLive, the post body column width is fixed, so using a large max-width
-  // makes desktop/mobile exports look identical. We keep the card at 800px like preview,
-  // and only adjust inner padding between desktop/mobile for readability.
+  // For bulletin board paste: use minimal outer padding and safe inner padding
+  // to prevent overflow on mobile screens. Box-sizing: border-box ensures padding
+  // is included in width calculations.
   const baseLayout = {
     maxWidth: '800px',
-    outerPadding: '2rem',
+    outerPadding: '0.5rem',  // Reduced from 2rem to prevent mobile overflow
     headerTitleSize: '2.5rem',
     headerTitleSizeBg: '3rem',
     headerSubtitleSize: '1.125rem',
     headerSubtitleSizeBg: '1.25rem',
     headerAuthorSize: '0.875rem',
     headerAuthorSizeBg: '1rem',
-    heroPadding: '2rem',
+    heroPadding: '1.5rem',  // Reduced from 2rem
   };
 
-  // 미리보기와 동일하게 "가로 여백을 % 기반"으로 맞춰서,
-  // 화면 크기에 따라 너무 극단적으로 달라지지 않게 함
+  // Use fixed padding in rem/px for bulletin boards (% can cause issues)
   const layout =
     viewport === 'mobile'
       ? {
           ...baseLayout,
-          innerPadding: '3rem 5%',
+          innerPadding: '2rem 1rem',  // Reduced: mobile needs minimal horizontal padding
         }
       : {
           ...baseLayout,
-          innerPadding: '3rem 15%',
+          innerPadding: '2.5rem 1.5rem',  // Reduced from '3rem 15%'
         };
 
   // Apply titlePosition also when there is no hero image.
@@ -113,13 +111,10 @@ export function generateHTML(
       ? chapters.map((chapter, idx) => generateChapterHTML(chapter, idx, style, collapseMode)).join('\n')
       : '';
 
-  // NOTE: 게시판 붙여넣기에서는 <script>가 거의 항상 제거되어 토글이 안 됩니다.
-  // 그래서 토글은 JS 대신 <details>/<summary> 기반으로 생성합니다.
-  // 또한 게시판에서 <style>이 제거될 수도 있으므로 핵심 레이아웃은 inline 스타일로 처리합니다.
-
+  // Add box-sizing: border-box and max-width: 100% to all containers to prevent overflow
   const containerHTML = `
-<div style="font-family: ${style.fontFamily}; background: ${style.transparentOuter ? 'transparent' : style.outerBg}; padding: ${layout.outerPadding};">
-  <div style="width: 100%; max-width: ${layout.maxWidth}; margin: 0 auto; background: ${style.cardBg}; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: ${layout.innerPadding};">
+<div style="box-sizing: border-box; max-width: 100%; font-family: ${style.fontFamily}; background: ${style.transparentOuter ? 'transparent' : style.outerBg}; padding: ${layout.outerPadding};">
+  <div style="box-sizing: border-box; width: 100%; max-width: ${layout.maxWidth}; margin: 0 auto; background: ${style.cardBg}; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: ${layout.innerPadding};">
     ${header.heroImageLayout === 'above' && header.heroImageUrl ? heroImageHTML : ''}
     ${header.heroImageLayout === 'background' && header.heroImageUrl ? heroImageHTML : headerHTML}
     ${header.heroImageLayout !== 'above' && header.heroImageLayout !== 'background' && !header.heroImageUrl ? headerHTML : ''}
