@@ -58,8 +58,6 @@ export function generateHTML(
   const headerAlignment = getTitleAlignment(header.titlePosition || 'center');
   const headerTextAlign =
     headerAlignment.horizontal === 'flex-start' ? 'left' : headerAlignment.horizontal === 'flex-end' ? 'right' : 'center';
-  const headerTagsJustify =
-    headerAlignment.horizontal === 'flex-start' ? 'flex-start' : headerAlignment.horizontal === 'flex-end' ? 'flex-end' : 'center';
 
   let heroImageHTML = '';
   if (header.heroImageUrl) {
@@ -88,6 +86,16 @@ export function generateHTML(
     }
   }
 
+  const tagsHTML =
+    header.tags && header.tags.length > 0
+      ? `<div style="margin-top: 1rem; text-align: ${headerTextAlign};">${header.tags
+          .map(
+            (tag) =>
+              `<span style="display: inline-block; background-color: ${style.highlightBg}; color: ${style.highlightText}; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; margin: 0 0.25rem 0.4rem 0.25rem;">${escapeHtml(tag)}</span>`
+          )
+          .join('')}</div>`
+      : '';
+
   const headerHTML =
     header.heroImageLayout !== 'background' || !header.heroImageUrl
       ? `
@@ -95,16 +103,7 @@ export function generateHTML(
       <h1 style="font-size: ${layout.headerTitleSize}; font-weight: 900; margin-bottom: 0.5rem; margin-top: 0; color: ${header.titleColor || style.bodyText};">${escapeHtml(title)}</h1>
       ${header.subtitle ? `<p style=\"font-size: ${layout.headerSubtitleSize}; color: ${header.subtitleColor || style.bodyText}; opacity: 0.7; margin-bottom: 0.5rem; margin-top: 0;\">${escapeHtml(header.subtitle)}</p>` : ''}
       ${header.author ? `<p style=\"font-size: ${layout.headerAuthorSize}; color: ${header.authorColor || style.bodyText}; opacity: 0.6; font-weight: 700; margin-top: 0; margin-bottom: 0;\">${escapeHtml(header.author)}</p>` : ''}
-      ${
-        header.tags && header.tags.length > 0
-          ? `<div style="display: flex; gap: 0.5rem; justify-content: ${headerTagsJustify}; margin-top: 1rem; flex-wrap: wrap;">${header.tags
-              .map(
-                (tag) =>
-                  `<span style="background-color: ${style.highlightBg}; color: ${style.highlightText}; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700;">${escapeHtml(tag)}</span>`
-              )
-              .join('')}</div>`
-          : ''
-      }
+      ${tagsHTML}
     </div>
   `
       : '';
