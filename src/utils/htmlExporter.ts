@@ -48,8 +48,8 @@ export function generateHTML(
 
   const desktopLayout = {
     ...commonLayout,
-    // More visible difference vs mobile + better line length on wide screens.
-    cardMaxWidth: '640px',
+    // Slightly narrower than before so it's visibly different even inside Arca's fixed post column.
+    cardMaxWidth: '600px',
     innerPadding: 'clamp(28px, 2.2vw, 40px) clamp(22px, 2.2vw, 34px)',
   };
 
