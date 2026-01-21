@@ -22,12 +22,10 @@ export function generateHTML(
 
   // Log Atelier-like defaults:
   // - Outer wrapper takes full width (no extra padding)
-  // - Card is centered with a reasonable max-width
-  // - Card padding uses clamp so it feels consistent on both mobile/desktop
-  const baseLayout = {
+  // - Card is centered with a readable max-width
+  // - Mobile/desktop differ (desktop: narrower card + slightly roomier padding)
+  const commonLayout = {
     outerPadding: '0',
-    innerPadding: 'clamp(22px, 4vw, 36px) clamp(16px, 4vw, 30px)',
-    cardMaxWidth: '750px',
     cardRadius: '14px',
     cardShadow: '0 2px 8px rgba(0,0,0,0.08)',
 
@@ -40,8 +38,21 @@ export function generateHTML(
     heroPadding: '1rem',
   };
 
-  // Keep viewMode for future tuning hooks; padding is handled by clamp.
-  const layout = viewport === 'mobile' ? baseLayout : baseLayout;
+  const mobileLayout = {
+    ...commonLayout,
+    // Mobile is viewport-limited anyway; keep card reasonable but let padding breathe.
+    cardMaxWidth: '750px',
+    innerPadding: 'clamp(20px, 4.8vw, 32px) clamp(14px, 4.8vw, 22px)',
+  };
+
+  const desktopLayout = {
+    ...commonLayout,
+    // Desktop: slightly narrower than before to improve line length readability.
+    cardMaxWidth: '680px',
+    innerPadding: 'clamp(28px, 2.2vw, 40px) clamp(22px, 2.2vw, 34px)',
+  };
+
+  const layout = viewport === 'mobile' ? mobileLayout : desktopLayout;
 
   const headerAlignment = getTitleAlignment(header.titlePosition || 'center');
   const headerTextAlign =
@@ -63,8 +74,8 @@ export function generateHTML(
           <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: ${alignment.vertical}; justify-content: ${alignment.horizontal}; padding: ${layout.heroPadding};">
             <div style="text-align: ${textAlign}; color: ${header.titleColor || '#fff'}; text-shadow: 0 2px 8px rgba(0,0,0,0.5);">
               <h1 style="font-size: ${layout.headerTitleSizeBg}; font-weight: 900; margin-bottom: 0.5rem; margin-top: 0;">${escapeHtml(title)}</h1>
-              ${header.subtitle ? `<p style="font-size: ${layout.headerSubtitleSizeBg}; color: ${header.subtitleColor || '#fff'}; margin-bottom: 0.5rem; margin-top: 0;">${escapeHtml(header.subtitle)}</p>` : ''}
-              ${header.author ? `<p style="font-size: ${layout.headerAuthorSizeBg}; color: ${header.authorColor || '#fff'}; margin-top: 0; margin-bottom: 0;">${escapeHtml(header.author)}</p>` : ''}
+              ${header.subtitle ? `<p style=\"font-size: ${layout.headerSubtitleSizeBg}; color: ${header.subtitleColor || '#fff'}; margin-bottom: 0.5rem; margin-top: 0;\">${escapeHtml(header.subtitle)}</p>` : ''}
+              ${header.author ? `<p style=\"font-size: ${layout.headerAuthorSizeBg}; color: ${header.authorColor || '#fff'}; margin-top: 0; margin-bottom: 0;\">${escapeHtml(header.author)}</p>` : ''}
             </div>
           </div>
         </div>
@@ -81,8 +92,8 @@ export function generateHTML(
       ? `
     <div style="text-align: ${headerTextAlign}; margin-bottom: 2rem;">
       <h1 style="font-size: ${layout.headerTitleSize}; font-weight: 900; margin-bottom: 0.5rem; margin-top: 0; color: ${header.titleColor || style.bodyText};">${escapeHtml(title)}</h1>
-      ${header.subtitle ? `<p style="font-size: ${layout.headerSubtitleSize}; color: ${header.subtitleColor || style.bodyText}; opacity: 0.7; margin-bottom: 0.5rem; margin-top: 0;">${escapeHtml(header.subtitle)}</p>` : ''}
-      ${header.author ? `<p style="font-size: ${layout.headerAuthorSize}; color: ${header.authorColor || style.bodyText}; opacity: 0.6; font-weight: 700; margin-top: 0; margin-bottom: 0;">${escapeHtml(header.author)}</p>` : ''}
+      ${header.subtitle ? `<p style=\"font-size: ${layout.headerSubtitleSize}; color: ${header.subtitleColor || style.bodyText}; opacity: 0.7; margin-bottom: 0.5rem; margin-top: 0;\">${escapeHtml(header.subtitle)}</p>` : ''}
+      ${header.author ? `<p style=\"font-size: ${layout.headerAuthorSize}; color: ${header.authorColor || style.bodyText}; opacity: 0.6; font-weight: 700; margin-top: 0; margin-bottom: 0;\">${escapeHtml(header.author)}</p>` : ''}
       ${
         header.tags && header.tags.length > 0
           ? `<div style="display: flex; gap: 0.5rem; justify-content: ${headerTagsJustify}; margin-top: 1rem; flex-wrap: wrap;">${header.tags
