@@ -31,7 +31,6 @@ export function generateHTML(
     heroPadding: '1rem',
   };
 
-  // Match NovelPreview.tsx padding: mobile 5%, desktop 15%
   const layout =
     viewport === 'mobile'
       ? {
@@ -43,15 +42,12 @@ export function generateHTML(
           innerPadding: '3rem 15%',
         };
 
-  // Apply titlePosition also when there is no hero image.
-  // For non-background headers, vertical positions are interpreted as horizontal alignment only.
   const headerAlignment = getTitleAlignment(header.titlePosition || 'center');
   const headerTextAlign =
     headerAlignment.horizontal === 'flex-start' ? 'left' : headerAlignment.horizontal === 'flex-end' ? 'right' : 'center';
   const headerTagsJustify =
     headerAlignment.horizontal === 'flex-start' ? 'flex-start' : headerAlignment.horizontal === 'flex-end' ? 'flex-end' : 'center';
 
-  // Generate hero image HTML
   let heroImageHTML = '';
   if (header.heroImageUrl) {
     const paddingBottom = aspectRatioMap[header.heroImageAspectRatio || '16:9'];
@@ -79,7 +75,6 @@ export function generateHTML(
     }
   }
 
-  // Generate header (when not using background layout)
   const headerHTML =
     header.heroImageLayout !== 'background' || !header.heroImageUrl
       ? `
@@ -101,7 +96,6 @@ export function generateHTML(
   `
       : '';
 
-  // Generate chapters HTML
   const chaptersHTML =
     chapters && chapters.length > 0
       ? chapters.map((chapter, idx) => generateChapterHTML(chapter, idx, style, collapseMode)).join('\n')
@@ -207,19 +201,30 @@ function processDialogue(text: string, style: { highlightBg: string; highlightTe
   const wrap = (content: string, bg: string, fg: string) =>
     `<span style="background: ${bg}; color: ${fg}; padding: 2px 6px; border-radius: 4px;">${content}</span>`;
 
-  return text
-    // Thought (double single quotes) should come before single-quote matching.
-    .replace(/''([^']+)''/g, (_m, inner) => wrap(`''${inner}''`, thoughtBg, thoughtText))
-    // Dialogue
-    .replace(/"([^"]+)"/g, (_m, inner) => wrap(`&quot;${inner}&quot;`, dialogueBg, dialogueText))
-    .replace(/"([^"]+)"/g, (_m, inner) => wrap(`"${inner}"`, dialogueBg, dialogueText))
-    .replace(/「([^」]+)」/g, (_m, inner) => wrap(`「${inner}」`, dialogueBg, dialogueText))
-    .replace(/‹([^›]+)›/g, (_m, inner) => wrap(`‹${inner}›`, dialogueBg, dialogueText))
-    .replace(/«([^»]+)»/g, (_m, inner) => wrap(`«${inner}»`, dialogueBg, dialogueText))
-    // Thought
-    .replace(/'([^']+)'/g, (_m, inner) => wrap(`'${inner}'`, thoughtBg, thoughtText))
-    .replace(/'([^']+)'/g, (_m, inner) => wrap(`'${inner}'`, thoughtBg, thoughtText))
-    .replace(/‚([^']+)'/g, (_m, inner) => wrap(`‚${inner}'`, thoughtBg, thoughtText));
+  // Match NovelPreview.tsx regex exactly: dialogue first group, thought second group
+  const regex = /("[^"]+"|"[^"]+"|「[^」]+」|‹[^›]+›|«[^»]+»)|(''[^']+''|'[^']+'|'[^']+'|‚[^']+')/g;
+  
+  let result = '';
+  let lastIndex = 0;
+  let match;
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      result += text.substring(lastIndex, match.index);
+    }
+
+    const token = match[0];
+    const isDialogue = !!match[1];
+
+    result += wrap(token, isDialogue ? dialogueBg : thoughtBg, isDialogue ? dialogueText : thoughtText);
+    lastIndex = match.index + token.length;
+  }
+
+  if (lastIndex < text.length) {
+    result += text.substring(lastIndex);
+  }
+
+  return result || text;
 }
 
 export function copyHTMLToClipboard(html: string): Promise<void> {
