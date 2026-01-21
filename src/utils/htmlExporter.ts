@@ -20,12 +20,8 @@ export function generateHTML(
     original: 'auto',
   };
 
-  // For bulletin board paste: aggressive mobile-first approach
-  // - No fixed max-width that could cause overflow
-  // - Minimal padding to prevent horizontal scroll
-  // - All containers use box-sizing: border-box
   const baseLayout = {
-    outerPadding: '0.25rem',  // Minimal to prevent edge overflow
+    outerPadding: '2rem',
     headerTitleSize: '1.75rem',
     headerTitleSizeBg: '2rem',
     headerSubtitleSize: '1rem',
@@ -35,16 +31,16 @@ export function generateHTML(
     heroPadding: '1rem',
   };
 
-  // Mobile uses even smaller padding, desktop slightly more comfortable
+  // Match NovelPreview.tsx padding: mobile 5%, desktop 15%
   const layout =
     viewport === 'mobile'
       ? {
           ...baseLayout,
-          innerPadding: '1.5rem 0.75rem',  // Minimal horizontal padding
+          innerPadding: '3rem 5%',
         }
       : {
           ...baseLayout,
-          innerPadding: '2rem 1.25rem',
+          innerPadding: '3rem 15%',
         };
 
   // Apply titlePosition also when there is no hero image.
@@ -111,11 +107,10 @@ export function generateHTML(
       ? chapters.map((chapter, idx) => generateChapterHTML(chapter, idx, style, collapseMode)).join('\n')
       : '';
 
-  // Critical: use width: 100% and max-width: 100% on ALL containers
-  // Remove fixed max-width (like 800px) to prevent overflow on narrow bulletin board columns
+  // Use percentage-based padding to match preview behavior
   const containerHTML = `
 <div style="box-sizing: border-box; width: 100%; max-width: 100%; font-family: ${style.fontFamily}; background: ${style.transparentOuter ? 'transparent' : style.outerBg}; padding: ${layout.outerPadding};">
-  <div style="box-sizing: border-box; width: 100%; max-width: 100%; margin: 0 auto; background: ${style.cardBg}; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: ${layout.innerPadding}; overflow-wrap: break-word; word-wrap: break-word;">
+  <div style="box-sizing: border-box; width: 100%; max-width: 800px; margin: 0 auto; background: ${style.cardBg}; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: ${layout.innerPadding}; overflow-wrap: break-word; word-wrap: break-word;">
     ${header.heroImageLayout === 'above' && header.heroImageUrl ? heroImageHTML : ''}
     ${header.heroImageLayout === 'background' && header.heroImageUrl ? heroImageHTML : headerHTML}
     ${header.heroImageLayout !== 'above' && header.heroImageLayout !== 'background' && !header.heroImageUrl ? headerHTML : ''}
@@ -218,18 +213,17 @@ function processDialogue(text: string, style: { highlightBg: string; highlightTe
     .replace(/''([^']+)''/g, (_m, inner) => wrap(`''${inner}''`, thoughtBg, thoughtText))
     // Dialogue
     .replace(/"([^"]+)"/g, (_m, inner) => wrap(`&quot;${inner}&quot;`, dialogueBg, dialogueText))
-    .replace(/“([^”]+)”/g, (_m, inner) => wrap(`“${inner}”`, dialogueBg, dialogueText))
+    .replace(/"([^"]+)"/g, (_m, inner) => wrap(`"${inner}"`, dialogueBg, dialogueText))
     .replace(/「([^」]+)」/g, (_m, inner) => wrap(`「${inner}」`, dialogueBg, dialogueText))
     .replace(/‹([^›]+)›/g, (_m, inner) => wrap(`‹${inner}›`, dialogueBg, dialogueText))
     .replace(/«([^»]+)»/g, (_m, inner) => wrap(`«${inner}»`, dialogueBg, dialogueText))
     // Thought
     .replace(/'([^']+)'/g, (_m, inner) => wrap(`'${inner}'`, thoughtBg, thoughtText))
-    .replace(/‘([^’]+)’/g, (_m, inner) => wrap(`‘${inner}’`, thoughtBg, thoughtText))
-    .replace(/‚([^’]+)‘/g, (_m, inner) => wrap(`‚${inner}‘`, thoughtBg, thoughtText));
+    .replace(/'([^']+)'/g, (_m, inner) => wrap(`'${inner}'`, thoughtBg, thoughtText))
+    .replace(/‚([^']+)'/g, (_m, inner) => wrap(`‚${inner}'`, thoughtBg, thoughtText));
 }
 
 export function copyHTMLToClipboard(html: string): Promise<void> {
-  // 게시판 붙여넣기에서 스크립트가 제거되는 경우가 많아, 여기서는 순수 HTML만 복사합니다.
   return navigator.clipboard.writeText(html);
 }
 
