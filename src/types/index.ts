@@ -41,6 +41,8 @@ export interface NovelStyle {
   bodyText: string;
   highlightBg: string;
   highlightText: string;
+  thoughtHighlightBg?: string;
+  thoughtHighlightText?: string;
   fontSize: number;
   lineHeight: number;
   letterSpacing: number;

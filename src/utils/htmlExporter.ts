@@ -136,7 +136,7 @@ function generateChapterHTML(chapter: Chapter, index: number, style: any, collap
     ? chapter.content
         .split(/\n\n+/)
         .map((para) => {
-          const processedText = processDialogue(escapeHtml(para), style.highlightBg, style.highlightText);
+          const processedText = processDialogue(escapeHtml(para), style);
           return `<p style="margin-bottom: 0.7rem; margin-top: 0; line-height: ${style.lineHeight}; letter-spacing: ${style.letterSpacing}px; color: ${style.bodyText};">${processedText}</p>`;
         })
         .join('\n')
@@ -169,7 +169,7 @@ function generateSectionHTML(section: Section, _chapterIdx: number, _sectionIdx:
     ? section.content
         .split(/\n\n+/)
         .map((para) => {
-          const processedText = processDialogue(escapeHtml(para), style.highlightBg, style.highlightText);
+          const processedText = processDialogue(escapeHtml(para), style);
           return `<p style="margin-bottom: 0.5rem; margin-top: 0; line-height: ${style.lineHeight}; letter-spacing: ${style.letterSpacing}px; color: ${style.bodyText};">${processedText}</p>`;
         })
         .join('\n')
@@ -204,20 +204,26 @@ function escapeHtml(text: string): string {
   return div.innerHTML;
 }
 
-function processDialogue(text: string, highlightBg: string, highlightText: string): string {
-  // Support all quote types: "", “”, '', ‘’, 「」, ‚‘, ‹›, «»
-  const wrap = (content: string) =>
-    `<span style="background: ${highlightBg}; color: ${highlightText}; padding: 2px 6px; border-radius: 4px;">${content}</span>`;
+function processDialogue(text: string, style: { highlightBg: string; highlightText: string; thoughtHighlightBg?: string; thoughtHighlightText?: string }): string {
+  // Dialogue: "", “”, 「」, ‹›, «»
+  // Thought: '', ‘’, ‚‘
+  const dialogueBg = style.highlightBg;
+  const dialogueText = style.highlightText;
+  const thoughtBg = style.thoughtHighlightBg ?? dialogueBg;
+  const thoughtText = style.thoughtHighlightText ?? dialogueText;
+
+  const wrap = (content: string, bg: string, fg: string) =>
+    `<span style="background: ${bg}; color: ${fg}; padding: 2px 6px; border-radius: 4px;">${content}</span>`;
 
   return text
-    .replace(/"([^"]+)"/g, (_m, inner) => wrap(`&quot;${inner}&quot;`))
-    .replace(/“([^”]+)”/g, (_m, inner) => wrap(`“${inner}”`))
-    .replace(/'([^']+)'/g, (_m, inner) => wrap(`'${inner}'`))
-    .replace(/‘([^’]+)’/g, (_m, inner) => wrap(`‘${inner}’`))
-    .replace(/「([^」]+)」/g, (_m, inner) => wrap(`「${inner}」`))
-    .replace(/‚([^’]+)‘/g, (_m, inner) => wrap(`‚${inner}‘`))
-    .replace(/‹([^›]+)›/g, (_m, inner) => wrap(`‹${inner}›`))
-    .replace(/«([^»]+)»/g, (_m, inner) => wrap(`«${inner}»`));
+    .replace(/"([^"]+)"/g, (_m, inner) => wrap(`&quot;${inner}&quot;`, dialogueBg, dialogueText))
+    .replace(/“([^”]+)”/g, (_m, inner) => wrap(`“${inner}”`, dialogueBg, dialogueText))
+    .replace(/'([^']+)'/g, (_m, inner) => wrap(`'${inner}'`, thoughtBg, thoughtText))
+    .replace(/‘([^’]+)’/g, (_m, inner) => wrap(`‘${inner}’`, thoughtBg, thoughtText))
+    .replace(/「([^」]+)」/g, (_m, inner) => wrap(`「${inner}」`, dialogueBg, dialogueText))
+    .replace(/‚([^’]+)‘/g, (_m, inner) => wrap(`‚${inner}‘`, thoughtBg, thoughtText))
+    .replace(/‹([^›]+)›/g, (_m, inner) => wrap(`‹${inner}›`, dialogueBg, dialogueText))
+    .replace(/«([^»]+)»/g, (_m, inner) => wrap(`«${inner}»`, dialogueBg, dialogueText));
 }
 
 export function copyHTMLToClipboard(html: string): Promise<void> {

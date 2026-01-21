@@ -39,28 +39,37 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode, viewMode = 
     const parts: React.ReactNode[] = [];
     let lastIndex = 0;
 
-    // Support all quote types: "", “”, '', ‘’, 「」, ‚‘, ‹›, «»
-    const regex = /("[^"]+"|“[^”]+”|'[^']+'|‘[^’]+’|「[^」]+」|‚[^’]+‘|‹[^›]+›|«[^»]+»)/g;
+    // Dialogue: "", “”, 「」, ‹›, «»
+    // Thought: '', ‘’, ‚‘
+    const regex = /("[^"]+"|“[^”]+”|「[^」]+」|‹[^›]+›|«[^»]+»)|('[^']+'|‘[^’]+’|‚[^’]+‘)/g;
     let match;
+
+    const thoughtBg = style.thoughtHighlightBg ?? style.highlightBg;
+    const thoughtText = style.thoughtHighlightText ?? style.highlightText;
 
     while ((match = regex.exec(text)) !== null) {
       if (match.index > lastIndex) {
         parts.push(text.substring(lastIndex, match.index));
       }
+
+      const token = match[0];
+      const isDialogue = !!match[1];
+
       parts.push(
         <span
           key={match.index}
           style={{
-            backgroundColor: style.highlightBg,
-            color: style.highlightText,
+            backgroundColor: isDialogue ? style.highlightBg : thoughtBg,
+            color: isDialogue ? style.highlightText : thoughtText,
             padding: '2px 6px',
             borderRadius: '4px',
           }}
         >
-          {match[0]}
+          {token}
         </span>
       );
-      lastIndex = match.index + match[0].length;
+
+      lastIndex = match.index + token.length;
     }
 
     if (lastIndex < text.length) {
