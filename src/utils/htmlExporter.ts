@@ -205,40 +205,19 @@ function escapeHtml(text: string): string {
 }
 
 function processDialogue(text: string, highlightBg: string, highlightText: string): string {
-  // Support all quote types: "", "", '', '', 「」, ‚', ‹›, «»
+  // Support all quote types: "", “”, '', ‘’, 「」, ‚‘, ‹›, «»
+  const wrap = (content: string) =>
+    `<span style="background: ${highlightBg}; color: ${highlightText}; padding: 2px 6px; border-radius: 4px;">${content}</span>`;
+
   return text
-    .replace(
-      /"([^"]+)"/g,
-      `<span style="background: ${highlightBg}; color: ${highlightText}; padding: 2px 6px; border-radius: 4px;">&quot;$1&quot;</span>`
-    )
-    .replace(
-      /"([^"]+)"/g,
-      `<span style="background: ${highlightBg}; color: ${highlightText}; padding: 2px 6px; border-radius: 4px;">&ldquo;$1&rdquo;</span>`
-    )
-    .replace(
-      /'([^']+)'/g,
-      `<span style="background: ${highlightBg}; color: ${highlightText}; padding: 2px 6px; border-radius: 4px;">'$1'</span>`
-    )
-    .replace(
-      /'([^']+)'/g,
-      `<span style="background: ${highlightBg}; color: ${highlightText}; padding: 2px 6px; border-radius: 4px;">&lsquo;$1&rsquo;</span>`
-    )
-    .replace(
-      /「([^」]+)」/g,
-      `<span style="background: ${highlightBg}; color: ${highlightText}; padding: 2px 6px; border-radius: 4px;">「$1」</span>`
-    )
-    .replace(
-      /‚([^']+)'/g,
-      `<span style="background: ${highlightBg}; color: ${highlightText}; padding: 2px 6px; border-radius: 4px;">&sbquo;$1&lsquo;</span>`
-    )
-    .replace(
-      /‹([^›]+)›/g,
-      `<span style="background: ${highlightBg}; color: ${highlightText}; padding: 2px 6px; border-radius: 4px;">&lsaquo;$1&rsaquo;</span>`
-    )
-    .replace(
-      /«([^»]+)»/g,
-      `<span style="background: ${highlightBg}; color: ${highlightText}; padding: 2px 6px; border-radius: 4px;">&laquo;$1&raquo;</span>`
-    );
+    .replace(/"([^"]+)"/g, (_m, inner) => wrap(`&quot;${inner}&quot;`))
+    .replace(/“([^”]+)”/g, (_m, inner) => wrap(`“${inner}”`))
+    .replace(/'([^']+)'/g, (_m, inner) => wrap(`'${inner}'`))
+    .replace(/‘([^’]+)’/g, (_m, inner) => wrap(`‘${inner}’`))
+    .replace(/「([^」]+)」/g, (_m, inner) => wrap(`「${inner}」`))
+    .replace(/‚([^’]+)‘/g, (_m, inner) => wrap(`‚${inner}‘`))
+    .replace(/‹([^›]+)›/g, (_m, inner) => wrap(`‹${inner}›`))
+    .replace(/«([^»]+)»/g, (_m, inner) => wrap(`«${inner}»`));
 }
 
 export function copyHTMLToClipboard(html: string): Promise<void> {
