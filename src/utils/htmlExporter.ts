@@ -20,8 +20,17 @@ export function generateHTML(
     original: 'auto',
   };
 
+  // Log Atelier-like defaults:
+  // - Outer wrapper takes full width (no extra padding)
+  // - Card is centered with a reasonable max-width
+  // - Card padding uses clamp so it feels consistent on both mobile/desktop
   const baseLayout = {
-    outerPadding: '2rem',
+    outerPadding: '0',
+    innerPadding: 'clamp(22px, 4vw, 36px) clamp(16px, 4vw, 30px)',
+    cardMaxWidth: '750px',
+    cardRadius: '14px',
+    cardShadow: '0 2px 8px rgba(0,0,0,0.08)',
+
     headerTitleSize: '1.75rem',
     headerTitleSizeBg: '2rem',
     headerSubtitleSize: '1rem',
@@ -31,16 +40,8 @@ export function generateHTML(
     heroPadding: '1rem',
   };
 
-  const layout =
-    viewport === 'mobile'
-      ? {
-          ...baseLayout,
-          innerPadding: '3rem 5%',
-        }
-      : {
-          ...baseLayout,
-          innerPadding: '3rem 15%',
-        };
+  // Keep viewMode for future tuning hooks; padding is handled by clamp.
+  const layout = viewport === 'mobile' ? baseLayout : baseLayout;
 
   const headerAlignment = getTitleAlignment(header.titlePosition || 'center');
   const headerTextAlign =
@@ -58,7 +59,7 @@ export function generateHTML(
         alignment.horizontal === 'flex-start' ? 'left' : alignment.horizontal === 'flex-end' ? 'right' : 'center';
 
       heroImageHTML = `
-        <div style="position: relative; width: 100%; padding-bottom: ${paddingBottom}; background-image: url('${header.heroImageUrl}'); background-size: cover; background-position: center; margin-bottom: 1.5rem;">
+        <div style="position: relative; width: 100%; padding-bottom: ${paddingBottom}; background-image: url('${header.heroImageUrl}'); background-size: cover; background-position: center; margin-bottom: 1.5rem; border-radius: ${layout.cardRadius}; overflow: hidden;">
           <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: ${alignment.vertical}; justify-content: ${alignment.horizontal}; padding: ${layout.heroPadding};">
             <div style="text-align: ${textAlign}; color: ${header.titleColor || '#fff'}; text-shadow: 0 2px 8px rgba(0,0,0,0.5);">
               <h1 style="font-size: ${layout.headerTitleSizeBg}; font-weight: 900; margin-bottom: 0.5rem; margin-top: 0;">${escapeHtml(title)}</h1>
@@ -69,9 +70,9 @@ export function generateHTML(
         </div>
       `;
     } else if (header.heroImageLayout === 'above') {
-      heroImageHTML = `<div style="width: 100%; padding-bottom: ${paddingBottom}; background-image: url('${header.heroImageUrl}'); background-size: cover; background-position: center; margin-bottom: 1.5rem;"></div>`;
+      heroImageHTML = `<div style="width: 100%; padding-bottom: ${paddingBottom}; background-image: url('${header.heroImageUrl}'); background-size: cover; background-position: center; margin-bottom: 1.5rem; border-radius: ${layout.cardRadius};"></div>`;
     } else if (header.heroImageLayout === 'below') {
-      heroImageHTML = `<div style="width: 100%; padding-bottom: ${paddingBottom}; background-image: url('${header.heroImageUrl}'); background-size: cover; background-position: center; margin-top: 1.5rem;"></div>`;
+      heroImageHTML = `<div style="width: 100%; padding-bottom: ${paddingBottom}; background-image: url('${header.heroImageUrl}'); background-size: cover; background-position: center; margin-top: 1.5rem; border-radius: ${layout.cardRadius};"></div>`;
     }
   }
 
@@ -87,7 +88,7 @@ export function generateHTML(
           ? `<div style="display: flex; gap: 0.5rem; justify-content: ${headerTagsJustify}; margin-top: 1rem; flex-wrap: wrap;">${header.tags
               .map(
                 (tag) =>
-                  `<span style="background-color: ${style.highlightBg}; color: ${style.highlightText}; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 700;">${escapeHtml(tag)}</span>`
+                  `<span style="background-color: ${style.highlightBg}; color: ${style.highlightText}; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700;">${escapeHtml(tag)}</span>`
               )
               .join('')}</div>`
           : ''
@@ -103,7 +104,7 @@ export function generateHTML(
 
   const containerHTML = `
 <div style="box-sizing: border-box; width: 100%; max-width: 100%; font-family: ${style.fontFamily}; background-color: ${style.transparentOuter ? 'transparent' : style.outerBg}; padding: ${layout.outerPadding};">
-  <div style="box-sizing: border-box; width: 100%; max-width: 800px; margin: 0 auto; background-color: ${style.cardBg}; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: ${layout.innerPadding}; overflow-wrap: break-word; word-wrap: break-word;">
+  <div style="box-sizing: border-box; width: 100%; max-width: ${layout.cardMaxWidth}; margin: 0 auto; background-color: ${style.cardBg}; border-radius: ${layout.cardRadius}; box-shadow: ${layout.cardShadow}; padding: ${layout.innerPadding}; overflow-wrap: break-word; word-wrap: break-word;">
     ${header.heroImageLayout === 'above' && header.heroImageUrl ? heroImageHTML : ''}
     ${header.heroImageLayout === 'background' && header.heroImageUrl ? heroImageHTML : headerHTML}
     ${header.heroImageLayout !== 'above' && header.heroImageLayout !== 'background' && !header.heroImageUrl ? headerHTML : ''}
@@ -138,7 +139,7 @@ function generateChapterHTML(chapter: Chapter, index: number, style: any, collap
       : '';
 
   return `
-    <details ${openAttr} style="margin-bottom: 0.5rem; background-color: ${style.chapterBg || style.cardBg}; border: 1px solid ${style.chapterBorder || '#e5e7eb'}; border-radius: 4px; overflow: hidden; font-family: ${style.fontFamily};">
+    <details ${openAttr} style="margin-bottom: 0.5rem; background-color: ${style.chapterBg || style.cardBg}; border: 1px solid ${style.chapterBorder || '#e5e7eb'}; border-radius: 10px; overflow: hidden; font-family: ${style.fontFamily};">
       <summary style="background-color: ${style.chapterTitleBg || '#f3f4f6'}; color: ${style.chapterTitleText || style.bodyText}; padding: 0.4rem 0.6rem; cursor: pointer; font-weight: 600; font-size: 0.85rem; font-family: ${style.fontFamily}; user-select: none;">
         ${escapeHtml(chapter.title)}
       </summary>
