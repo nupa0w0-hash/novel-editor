@@ -39,7 +39,8 @@ export const NovelPreview: React.FC<NovelPreviewProps> = ({ episode, viewMode = 
     const parts: React.ReactNode[] = [];
     let lastIndex = 0;
 
-    const regex = /("[^"]+"|「[^」]+」|"[^"]+")/g;
+    // Support all quote types: "", "", '', '', 「」, ‚', ‹›, «»
+    const regex = /("[^"]+"|"[^"]+"|'[^']+'|'[^']+'|「[^」]+」|‚[^']+'|‹[^›]+›|«[^»]+»)/g;
     let match;
 
     while ((match = regex.exec(text)) !== null) {
