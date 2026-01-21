@@ -107,7 +107,6 @@ export function generateHTML(
       ? chapters.map((chapter, idx) => generateChapterHTML(chapter, idx, style, collapseMode)).join('\n')
       : '';
 
-  // Use percentage-based padding to match preview behavior
   const containerHTML = `
 <div style="box-sizing: border-box; width: 100%; max-width: 100%; font-family: ${style.fontFamily}; background: ${style.transparentOuter ? 'transparent' : style.outerBg}; padding: ${layout.outerPadding};">
   <div style="box-sizing: border-box; width: 100%; max-width: 800px; margin: 0 auto; background: ${style.cardBg}; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: ${layout.innerPadding}; overflow-wrap: break-word; word-wrap: break-word;">
