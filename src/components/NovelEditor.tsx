@@ -585,9 +585,9 @@ export const NovelEditor = () => {
   return (
     <div className="flex flex-col md:flex-row w-screen min-h-screen md:h-screen bg-gray-100 overflow-x-hidden md:overflow-hidden">
       {/* Editor panel (scoped dark mode) */}
-      <div className={`${uiTheme === 'dark' ? 'dark' : ''} w-full md:w-1/2 md:min-w-[400px]`}>
-        <div className="flex flex-col border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 shadow-xl z-10 text-gray-900 dark:text-gray-100">
-          <div className="border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950 sticky top-0 z-20">
+      <div className={`${uiTheme === 'dark' ? 'dark' : ''} w-full md:w-1/2 md:min-w-[400px] md:h-screen flex flex-col`}>
+        <div className="flex flex-col h-full border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 shadow-xl z-10 text-gray-900 dark:text-gray-100">
+          <div className="border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950 flex-shrink-0">
             <div className="flex items-center justify-between gap-2 px-3 py-2 md:px-4 md:py-0 md:h-14">
               <div className="flex gap-2 md:gap-4">
                 <button
@@ -658,14 +658,14 @@ export const NovelEditor = () => {
                         <div className="flex rounded overflow-hidden border border-gray-200 dark:border-gray-700">
                           <button
                             onClick={() => setViewMode('desktop')}
-                            className={`text-[10px] font-bold px-2 py-1 ${viewMode === 'desktop' ? 'bg-black text-white dark:bg-white dark:text-black' : 'bg-white text-gray-500 hover:bg-gray-50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-gray-900'}`}
+                            className={`text-[10px] font-bold px-2 py-1 flex-1 ${viewMode === 'desktop' ? 'bg-black text-white dark:bg-white dark:text-black' : 'bg-white text-gray-500 hover:bg-gray-50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-gray-900'}`}
                             title="PC (미리보기 + 내보내기)"
                           >
                             PC
                           </button>
                           <button
                             onClick={() => setViewMode('mobile')}
-                            className={`text-[10px] font-bold px-2 py-1 ${viewMode === 'mobile' ? 'bg-black text-white dark:bg-white dark:text-black' : 'bg-white text-gray-500 hover:bg-gray-50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-gray-900'}`}
+                            className={`text-[10px] font-bold px-2 py-1 flex-1 ${viewMode === 'mobile' ? 'bg-black text-white dark:bg-white dark:text-black' : 'bg-white text-gray-500 hover:bg-gray-50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-gray-900'}`}
                             title="모바일 (미리보기 + 내보내기)"
                           >
                             모바일
@@ -954,8 +954,7 @@ export const NovelEditor = () => {
                         <div className="w-3 h-3 rounded-full border border-black/10" style={{ backgroundColor: preset.style.cardBg }}></div>
                         <span className="text-xs font-bold text-gray-600 dark:text-gray-200 group-hover:text-black dark:group-hover:text-white">{preset.name}</span>
                       </button>
-                    ))
-                    }
+                    ))}
                     {customPresets.map((preset, idx) => (
                       <div key={idx} className="relative group">
                         <button
@@ -1202,7 +1201,7 @@ export const NovelEditor = () => {
       </div>
 
       {/* Preview panel (no dark mode) */}
-      <div className="w-full md:w-1/2 bg-gray-200 md:h-full border-t md:border-t-0 overflow-hidden flex flex-col relative min-h-[60vh] md:min-h-0">
+      <div className="w-full md:w-1/2 bg-gray-200 md:h-screen border-t md:border-t-0 overflow-hidden flex flex-col relative min-h-[60vh] md:min-h-0">
         <div className="absolute top-2 right-2 md:top-4 md:right-4 z-10 bg-black/80 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-sm pointer-events-none">
           실시간 미리보기
         </div>
